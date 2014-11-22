@@ -1,0 +1,7 @@
+# iSwfit requirements
+
+Django>=1.4.2,<1.7
+django_openstack_auth>=1.1.7
+
+python-keystoneclient>=0.11.1
+python-swiftclient>=2.2.0
