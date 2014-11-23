@@ -23,3 +23,6 @@ AUTHORS
 ChangeLog
 tags
 iswift.egg-info/
+.project
+.pydevproject
+.settings/
