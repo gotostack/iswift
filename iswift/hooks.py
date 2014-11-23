@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # Copyright iSwfit
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -14,11 +12,13 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import os
-import sys
+from distutils.command import install
 
-from django.core.management import execute_from_command_line  # noqa
 
-if __name__ == "__main__":
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "iswift.settings")
-    execute_from_command_line(sys.argv)
+def setup_hook(config):
+    """Filter config parsed from a setup.cfg to inject our defaults."""
+    # Tell distutils not to put the data_files in platform-specific
+    # installation locations. See here for an explanation:
+    # https://groups.google.com/forum/#!topic/comp.lang.python/Nex7L-026uw
+    for scheme in install.INSTALL_SCHEMES.values():
+        scheme['data'] = scheme['purelib']

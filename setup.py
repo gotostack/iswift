@@ -14,11 +14,17 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import os
-import sys
+# THIS FILE IS MANAGED BY THE GLOBAL REQUIREMENTS REPO - DO NOT EDIT
+import setuptools
 
-from django.core.management import execute_from_command_line  # noqa
+# In python < 2.7.4, a lazy loading of package `pbr` will break
+# setuptools if some other modules registered functions in `atexit`.
+# solution from: http://bugs.python.org/issue15881#msg170215
+try:
+    import multiprocessing  # noqa
+except ImportError:
+    pass
 
-if __name__ == "__main__":
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "iswift.settings")
-    execute_from_command_line(sys.argv)
+setuptools.setup(
+    setup_requires=['pbr'],
+    pbr=True)

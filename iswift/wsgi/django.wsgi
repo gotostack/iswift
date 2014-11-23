@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # Copyright iSwfit
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -14,11 +12,17 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import logging
 import os
 import sys
+from django.core.wsgi import get_wsgi_application
+from django.conf import settings
 
-from django.core.management import execute_from_command_line  # noqa
+# Add this file path to sys.path in order to import settings
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), '../..'))
+os.environ['DJANGO_SETTINGS_MODULE'] = 'iswift.settings'
+sys.stdout = sys.stderr
 
-if __name__ == "__main__":
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "iswift.settings")
-    execute_from_command_line(sys.argv)
+DEBUG = False
+
+application = get_wsgi_application()

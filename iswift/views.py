@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # Copyright iSwfit
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -14,11 +12,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import os
-import sys
+from django.http import HttpResponse  # noqa
 
-from django.core.management import execute_from_command_line  # noqa
 
-if __name__ == "__main__":
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "iswift.settings")
-    execute_from_command_line(sys.argv)
+def home(request):
+    return HttpResponse("Hello iSwfit!")
