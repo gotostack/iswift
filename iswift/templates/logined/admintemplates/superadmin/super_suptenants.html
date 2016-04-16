@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}iSwift-超级管理员-租户管理{% endblock %}
+{% block headinfo %}欢迎,<b>{{ username }}</b>. | <a href="/logout">退出</a>{% endblock %}
+{% block content %}
+    {% block leftmenu %}
+    {% include "logined/admintemplates/superadmin/super_left_menu.html" %}
+    {% endblock %}
+    {% block maininfo %}
+    <div id="right_disply">
+        <div class="panel panel-info">
+				<div class="panel-heading">
+				          <h3 class="panel-title"><img src="/static/img/fatcow/32_32/chart_curve.png"> 租户管理<small></small></h3>
+				</div>
+			    <div id="file_sort" class="fileclear">
+			          <a id="name-sorter" class="file_sort_column_header bolded" style="cursor: pointer; ">
+			                        <span style="cursor: pointer; ">公司</span><img src="/static/img/icon_spacer.gif" style="line-height: 100%; cursor: pointer;" alt="" class="sprite page_icon page_icon_sort-downtick-on" border="0">
+			          </a>
+			          <a id="kind-sorter" class="file_sort_column_header noarrow" style="cursor: pointer; ">
+			            <span id="kind-sorter-label" style="cursor: pointer; ">规模</span>
+			          </a>
+			          <a id="modified-sorter" class="file_sort_column_header bolded" style="cursor: pointer; ">
+			            <span style="cursor: pointer; ">空间大小</span><img src="/static/img/icon_spacer.gif" style="line-height: 100%; cursor: pointer;" alt="" class="sprite page_icon page_icon_sort-downtick-on" border="0">
+			          </a>
+		        </div>
+		        <div id="file_detail">
+			        {% if companys %}
+			            <ol id="file_list_ui">
+			            {% for com  in companys %}
+			                 <li class="browse-file"><div class="filename-col"><img   class="page_icon  icon "   title="{{ com.name }}" draggable="true" src="/static/img/icon_spacer.gif "  height="20px" width="26px">
+			                 {{ com.name }}</div>
+			                 <div class="kind"><span class="category">{{com.employee_quantity}}</span><span class="extension secondary"></span></div>
+			                 <div class="modified"><span class="modified-time">{{com.storage_size|filesizeformat}}</span><a href="#"  class="shmodel-file title_bubble"  style="margin-right: 0px;width: 20px;"  title="Get link"><img class="  page_icon  page_icon_link18"  src="/static/img/icon_spacer.gif"></a></div><br class="clear"></li>
+			            {% endfor %}
+			            </ol> 
+			        {% endif %}
+			        <p>企业列表</p>
+		        </div>
+		</div>
+		<div class="panel panel-info">
+					<div class="panel-heading">
+					          <h3 class="panel-title">企业设置</h3>
+					</div>
+		            {% if errors %}
+		                <ul>
+		                    {% for error in errors %}
+		                    <li style="color: red;"><b>{{ error }}</b></li>
+		                    {% endfor %}
+		                </ul>
+		            {% endif %}
+		            <form id="register_form" action="/register/"  method="post" >{% csrf_token %}
+					      <div class="modal-body clearfix">
+					      {% include "_messages.html" %}
+						    <div ><label for="id_username"><h3>平台管理员:</h3></label></div>
+			                    <div class="input-group input_margin">
+			                       <label class="input-group-addon">操作类型:</label><select name="select" id="select" class="form-control" style=" width:350px;">
+			                                        <option value="0">请选择...</option>
+			                                        <option value="1">增加</option>
+			                                        <option value="2">修改</option>
+			                                        <option value="3">删除</option>
+			                                        <option value="4">查询</option>
+			                                      </select>
+			                </div>
+					      	<div ><label for="id_username"><h4>企业租户管理员:</h4></label></div>
+					      	   <div ><label for="id_username"><strong>请填写下面的表单增加企业超级管理员。<label style="color:red;">所有项目都为必填项。</label></strong></label></div>
+					           <div class="input-group input_margin"><label for="id_telephone"  class="input-group-addon">用户名(请填写email地址): </label><input type="text" id="username" name="username" value="{{ username }}" class="form-control" style=" width:350px;" ><div class="onError" id="usernameinfo"></div></div>
+					           <div class="input-group input_margin"><label for="id_username"  class="input-group-addon">电话:</label><input type="tel" id="telephone" name="telephone" value="{{ telephone }}" class="form-control" style=" width:350px;" ><div class="onError" id="telephoneinfo"></div></div>
+					           <div class="input-group input_margin"><label for="id_password"  class="input-group-addon">密码:</label><input type="password" id="password" name="password" value="{{ password }}" class="form-control" style=" width:350px;" ><div class="onError" id="passwordinfo"></div></div>
+					           <div class="input-group input_margin"><label for="id_confirm"  class="input-group-addon">确认密码:</label><input type="password" id="confirm" name="confirm" value="{{ confirm }}" class="form-control"  style=" width:350px;" ><div class="onError" id="confirminfo"></div></div>
+					           
+					        <div ><label for="id_username"><h4>企业信息:</h4></label></div>
+					           <div ><label for="id_username"><strong>请填写下面的表单增加公司的存储帐户基本信息。<label style="color:red;">所有项目都为必填项。</label></strong></label></div>
+					           <div class="input-group input_margin"><label for="id_username"  class="input-group-addon">企业名称:</label><input type="text" id="companyname" name="companyname" value="{{ companyname }}" class="form-control"  style=" width:350px;" ><div class="onError" id="companynameinfo"></div></div>
+					           <div class="input-group input_margin"><label for="id_username"  class="input-group-addon">企业租户名称:</label><input type="text" id="companytenant" name="companytenant" value="{{ companytenant }}" class="form-control" style=" width:350px;" ><div class="onError" id="companytenantinfo"></div></div>
+					           <div class="input-group input_margin"><label for="id_password"  class="input-group-addon">企业地址:</label><input type="text" id="companyaddress" name="companyaddress" value="{{ companyaddress }}" class="form-control"  style=" width:350px;" ><div class="onError" id="companyaddressinfo"></div></div>
+					           <div class="input-group input_margin"><label for="id_password"  class="input-group-addon">申请空间GB:</label><select type="number" id="companysize" name="companysize"  class="form-control"  style=" width:363px;" > 
+																								            <option value="0">请选择...</option>
+																								            <!-- <option value="1024">1GB</option>
+																								            <option value="5120">5GB</option>
+																											<option value="10240">10GB</option> -->
+																											<option value="50">50GB</option>
+																											<option value="100">100GB</option>
+																											<option value="500">500GB</option>
+																											<option value="1024">1TB</option>
+																											<option value="5120">5TB</option>
+																											<option value="10240">10TB</option>
+																											<option value="51200" >50TB</option>
+																											<option value="102400">100TB</option>
+																											<option value="204800">>100TB，联系我们</option>
+																									    </select><div class="onError" id="companysizeinfo" ></div>
+							   </div>
+					           <div class="input-group input_margin"><label for="id_confirm"  class="input-group-addon">公司或者组织规模:</label><select  type="number" class="form-control" id="companyusers" name="companyusers"  style=" width:363px;" >
+																										           <option value="0">请选择...</option>
+																										           <option value="20">20人以下</option>
+																										           <option value="99">20-99人</option>
+																									               <option value="499">100-499人 </option>
+																									               <option value="999">500-999人</option>
+																									               <option value="9999">1000-9999人</option>
+																									               <option value="10000">10000人以上</option>
+				                                                                                            </select><div class="onError" id="companyusersinfo"></div>
+					           </div>
+					      </div>
+					      <div class="modal-footer">
+						<button type="submit" class="btn btn-primary"> 注 册 </button>
+						   </div>
+					</form>
+		</div>
+    </div><!-- right display结束 -->
+    {% endblock %}
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}{{ pagetitle }}{% endblock %}
+{% block content %}
+{% if infotitle %}
+<div>{{ infotitle }}</div>
+{% endif %}
+{% if infobody %}
+<div>{{ infobody }}</div>
+{% endif %}
+{% if footer_right_links %}
+{% include "footerpages/howtos_left.html" %}
+{% endif %}
+{% if footer_lefts %}
+{% include "footerpages/howtos_right.html" %}
+{% endif %}
+{% if register_form %}
+{% include "footerpages/register_form.html" %}
+{% endif %}
+{% endblock %}

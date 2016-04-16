@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}iSwift-企业租户-更高版本管理级别申请{% endblock %}
+{% block headinfo %}欢迎,<b>{{ username }}</b>. | <a href="/logout">退出</a>{% endblock %}
+{% block content %}
+    {% block leftmenu %}
+    {% include "logined/admintemplates/company/company_left_menu.html" %}
+    {% endblock %}
+    {% block maininfo %}
+    <div id="right_disply">
+        <div class="panel panel-info">
+			<div class="panel-heading">
+			          <h3 class="panel-title">更高版本管理级别申请</h3>
+			</div>
+            {% if errors %}
+                <ul>
+                    {% for error in errors %}
+                    <li style="color: red;"><b>{{ error }}</b></li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            <form id="register_form" action=""  method="post" >{% csrf_token %}
+                  <div class="modal-body clearfix">
+                    <div ><label for="id_username"><h3>企业租户管理员:</h3></label></div>
+                    <div class="input-group input_margin">
+                       <label style="font-size:15px;font-weight:600">申请版本级别:</label><select name="select" class="form-control" id="select">
+                                        <option value="0">请选择...</option>
+                                        <option value="1">10个版本，5个版本永久备份</option>
+                                        <option value="2">20个版本，10个版本永久备份</option>
+                                        <option value="3">50个版本，25个版本永久备份</option>
+                                        <option value="3">100个版本，50个版本永久备份</option>
+                                        <option value="4">无限制版本和备份数量，联系我们</option>
+                                      </select>
+                    </div>
+                    <div><label for="id_username"><h3>提供管理员口令:</h3></label></div>
+                       <div class="input-group input_margin"><label for="id_username" class="input-group-addon">公司管理员:</label><input type="text" class="form-control"  name="companyname" value="{{ companyname }}" class="form-control" style=" width:350px;" ></div>
+                       <div class="input-group input_margin"><label for="id_password" class="input-group-addon">密码:</label><input type="text" name="companysize" value="{{ companysize }}" class="form-control" style=" width:350px;" ></div>
+                    </div>
+                  <div class="modal-footer">
+                		<button type="submit" class="btn btn-primary"> 提 交 </button>
+                  </div>
+            </form>
+        </div>
+    </div><!-- right display结束 -->
+    {% endblock %}
+{% endblock %}

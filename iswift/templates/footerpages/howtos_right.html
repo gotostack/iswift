@@ -1,0 +1,9 @@
+{% if footer_right_links %}
+<div id="right_disply">
+	<h1 id="link-0">How tos</h1>
+	{% for footer_right_link  in footer_right_links %}
+	<h2 id="{{ footer_right_link.link }}">{{footer_right_link.title}}</h2>
+	<p>{{footer_right_link.info}}</p>
+	{% endfor %}
+</div>
+{% endif %}

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+sudo apt-get install -y openstack-dashboard
+
+sudo \cp -rf /home/swift/webroot/iswift/settings/local_settings.py /etc/openstack-dashboard/local_settings.py
+sudo \cp -rf /home/swift/webroot/iswift/settings/memcached.conf /etc/memcached.conf
+
+sudo mysql -h 127.0.0.1  -uroot -p'12345' -e "drop DATABASE IF EXISTS dash;CREATE DATABASE dash;GRANT ALL ON dash.* TO 'dash'@'%' IDENTIFIED BY '12345';FLUSH PRIVILEGES;DELETE FROM mysql.user WHERE Host='localhost' AND User='';DELETE FROM mysql.user WHERE Host='ostk-controller1' AND User='';FLUSH PRIVILEGES;"
+
+sudo \cp -rf /home/swift/webroot/iswift/settings/openstack-dashboard.conf /etc/apache2/conf.d/openstack-dashboard.conf
+
+sudo python /usr/share/openstack-dashboard/manage.py syncdb
+
+sudo mkdir -p /var/lib/dash/.blackhole
+sudo /etc/init.d/apache2 restart

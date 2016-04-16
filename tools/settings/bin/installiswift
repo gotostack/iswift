@@ -1,0 +1,88 @@
+#!/bin/bash
+
+#install dependencies
+sudo apt-get install python-software-properties
+sudo add-apt-repository ppa:swift-core/release
+sudo apt-get update
+sudo apt-get install curl gcc git-core memcached python-coverage python-dev python-nose python-setuptools python-simplejson python-xattr sqlite3 xfsprogs python-eventlet python-greenlet python-pastedeploy python-netifaces python-pip
+sudo pip install mock
+sudo apt-get install screen ssh  vim
+
+
+#install web server
+sudo apt-get install apache2
+sudo apt-get install -y libapache2-mod-wsgi
+
+
+#install swift
+sudo mkdir /srv
+sudo truncate -s 1GB /srv/swift-disk
+sudo mkfs.xfs -i size=1024 /srv/swift-disk
+
+sudo sed  '$ a /srv/swift-disk /mnt/sdb1 xfs loop,noatime,nodiratime,nobarrier,logbufs=8 0 0' -i /etc/fstab
+
+sudo mkdir /mnt/sdb1
+sudo mount /mnt/sdb1
+sudo mkdir /mnt/sdb1/1 /mnt/sdb1/2 /mnt/sdb1/3 /mnt/sdb1/4
+sudo chown swift:swift /mnt/sdb1/*
+for x in {1..4}; do sudo ln -s /mnt/sdb1/$x /srv/$x; done
+sudo mkdir -p /etc/swift/object-server /etc/swift/container-server /etc/swift/account-server /srv/1/node/sdb1 /srv/2/node/sdb2 /srv/3/node/sdb3 /srv/4/node/sdb4 /var/run/swift
+
+chown -R swift:swift /etc/swift /srv/[1-4]/ /var/run/swift
+
+
+sudo sed '$ i\mkdir -p /var/cache/swift /var/cache/swift2 /var/cache/swift3 /var/cache/swift4' -i /etc/rc.local
+sudo sed '$ i\chown swift:swift /var/cache/swift*' -i /etc/rc.local
+sudo sed '$ i\mkdir -p /var/run/swift' -i /etc/rc.local
+sudo sed '$ i\chown swift:swift /var/run/swift' -i /etc/rc.local
+
+#install iswift web files
+sudo mkdir ./webroot
+sudo tar zxfv ./iswift.tar.gz ./webroot/
+
+sudo cp ~/webroot/iswift/settings/rsyncd.conf /etc/rsyncd.conf
+
+# /etc/default/rsync:  RSYNC_ENABLE=true
+sed 's/RSYNC_ENABLE=false/RSYNC_ENABLE=true/g' -i  ~/test.conf
+
+sudo service rsync restart
+
+sudo cp ~/webroot/iswift/settings/10-swift.conf /etc/rsyslog.d/10-swift.conf
+
+# Edit /etc/rsyslog.conf  $PrivDropToGroup adm
+sed 's/$PrivDropToGroup syslog/PrivDropToGroup adm/g' -i  ~/test.conf
+
+sudo mkdir -p /var/log/swift/hourly
+
+sudo chown -R syslog.adm /var/log/swift
+
+sudo chmod -R g+w /var/log/swift
+
+sudo service rsyslog restart
+
+sudo git clone https://github.com/openstack/swift.git
+sudo python ~/swift/setup.py develop
+sudo git clone https://github.com/openstack/python-swiftclient.git
+sudo python ~/python-swiftclient/python/setup.py develop
+
+sudo sed  '$ a export SWIFT_TEST_CONFIG_FILE=/etc/swift/test.conf' -i ~/.bashrc
+sudo sed  '$ a export PATH=${PATH}:~/bin' -i ~/.bashrc
+. ~/.bashrc
+
+
+sudo cp -rf ~/webroot/iswift/settings/proxy-server.conf /etc/swift/proxy-server.conf
+sudo cp -rf ~/webroot/iswift/settings/etc/swift/swift.conf /etc/swift/swift.conf
+
+sudo cp -rf ~/webroot/iswift/settings/servers/* /etc/swift/
+
+sudo cp -rf ~/webroot/iswift/settings/bin/* ~/bin/
+
+sudo chmod +x ~/bin/*
+
+~/remakerings
+
+sudo ~/startmain
+sudo ~/startrest
+
+#install mysql
+sudo apt-get install python-mysqldb mysql-server

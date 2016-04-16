@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}iSwift-企业租户-空间使用率{% endblock %}
+{% block headinfo %}欢迎,<a><b>{{ username }}</b></a>. | <a href="/logout">退出</a>{% endblock %}
+{% block content %}
+    {% block leftmenu %}
+    {% include "logined/admintemplates/company/company_left_menu.html" %}
+    {% endblock %}
+    {% block maininfo %}
+<div id="right_disply">
+	<div class="panel panel-info">
+		<div class="panel-heading">
+			<h3 class="panel-title"><img src="/static/img/fatcow/32_32/chart_pie_alternative.png">公司空间使用率<small>--黄色(未使用空间)，红色(已使用空间)</small></h3>
+		</div>
+		<div class="modal-body clearfix">
+		    {% include "logined/admintemplates/company/company_right_display.html" %}
+		</div>
+		<div class="modal-footer"><h4>贵公司拥有的空间大小：{{spaceall|filesizeformat}}<small>--已使用：{{spaceinused|filesizeformat}} 未使用：{{spacerem|filesizeformat}}</small></h4>
+		</div>
+	</div>
+</div><!-- right display结束 -->
+    {% endblock %}
+{% endblock %}

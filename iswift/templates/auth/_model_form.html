@@ -1,0 +1,29 @@
+<div id="{% block form_panel_id %}{% endblock %}" class="{% block form_panel_class %}{% endblock %}">
+    <div  id="{% block div_title_id %}{% endblock %}" class="{% block div_title_class %}{% endblock %}">
+        {% block div_title_info_id %}{% endblock %}
+    </div>
+    <div class="modal-header">
+         <h3>登录</h3>
+    </div>
+    <form id="{% block form_id %}{% endblock %}"  class="{% block form_class %}{% endblock %}"  action="{% block form_action %}{% endblock %}"  method="{% block form_method %}POST{% endblock %}" >{% csrf_token %}
+    
+    <div class="modal-body clearfix">
+	  {% include "_messages.html" %}
+	  <fieldset>
+            <!--  <div ><label for="id_tenantname">存储项目：</label><input type="text" name="tenantname" value="{{ tenantname }}"  style=" width:350px;" ></div> -->
+            <div class="control-group form-field clearfix">
+	            <label for="id_username">用户名：</label>
+	            <label id="icon_username"><input name="username" class="form-control" id="id_username" type="email" placeholder="example@example.com"></label>
+            </div>
+            <div class="control-group form-field clearfix">
+	            <label for="id_password">密码：</label>
+	            <label id="icon_password"><input name="password"  class="form-control"  id="id_password" type="password" placeholder="password"></label>
+            </div>
+      </fieldset>   
+    </div>
+    <div class="modal-footer">
+		<button type="submit" class="btn btn-primary" data-loading-text="登录中...">登录</button>
+	</div>
+</form>
+
+</div>

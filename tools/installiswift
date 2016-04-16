@@ -1,0 +1,335 @@
+#!/bin/bash
+
+# Check we're running as root
+if [ "$(id -u)" != "0" ]; then
+   echo "This script must be run as root"
+   exit 1
+fi
+
+usage() {
+cat << USAGE
+Syntax
+    installiswift  -m { e-mail address } -s {Administrator password} -p {mysql root password} 
+
+    -m: iSwift Administrator e-mail address
+    -s: iSwift Administrator security password
+    -p: mysql root password
+USAGE
+exit 1
+}
+
+# Process Command Line
+while getopts m:s:p:hy opts
+do
+  case $opts in
+    m)
+	ADMIN_EMAIL=${OPTARG}
+        ;;
+    s)
+	ADMIN_PWD=${OPTARG}
+	;;
+    p)
+	MYSQL_PWD=${OPTARG}
+	;;
+    h)
+	usage
+	;;
+  esac
+done
+
+# Defaults
+DEFAULT_ADMIN_EMAIL="admin@admin.com"
+DEFAULT_ADMIN_PWD="12345"
+DEFAULT_MYSQL_PWD="12345"
+
+# Check defaults / parameters passed to it
+if [ -z ${ADMIN_EMAIL} ]
+then
+	ADMIN_EMAIL=${DEFAULT_ADMIN_EMAIL}
+fi
+
+if [ -z ${ADMIN_PWD} ]
+then
+	ADMIN_PWD=${DEFAULT_ADMIN_PWD}
+fi
+
+if [ -z ${MYSQL_PWD} ]
+then
+	MYSQL_PWD=${DEFAULT_MYSQL_PWD}
+fi
+
+#install iswift web files
+mkdir /home/swift/webroot
+tar -zxvf /home/swift/iswift.tar.gz -C /home/swift/webroot/
+
+#install dependencies
+sudo apt-get install -y  python-software-properties
+sudo add-apt-repository -y ppa:swift-core/release
+sudo apt-get update
+sudo apt-get install -y  curl gcc git-core memcached python-coverage python-dev python-nose python-setuptools python-simplejson python-xattr sqlite3 xfsprogs python-eventlet python-greenlet python-pastedeploy python-netifaces python-pip
+sudo pip install  mock
+sudo apt-get install -y  screen ssh  vim
+
+
+#install web server
+sudo apt-get install -y  apache2
+sudo tar zxfv /home/swift/webroot/iswift/settings/Django-1.4.1.tar.gz -C /home/swift/webroot/iswift/settings/
+cd /home/swift/webroot/iswift/settings/Django-1.4.1/
+sudo python /home/swift/webroot/iswift/settings/Django-1.4.1/setup.py install
+cd /home/swift/
+sudo apt-get install -y libapache2-mod-wsgi
+
+#install swift
+sudo mkdir /srv
+sudo truncate -s 1GB /srv/swift-disk
+sudo mkfs.xfs -i size=1024 /srv/swift-disk
+
+sudo sed  '$ a /srv/swift-disk /mnt/sdb1 xfs loop,noatime,nodiratime,nobarrier,logbufs=8 0 0' -i /etc/fstab
+
+#sudo \cp -rf /home/swift/webroot/iswift/settings/fstab   /etc/fstab
+
+sudo mkdir /mnt/sdb1
+sudo mount /mnt/sdb1
+sudo mkdir /mnt/sdb1/1 /mnt/sdb1/2 /mnt/sdb1/3 /mnt/sdb1/4
+sudo chown swift:swift /mnt/sdb1/*
+for x in {1..4}; do sudo ln -s /mnt/sdb1/$x /srv/$x; done
+sudo mkdir -p /etc/swift/object-server /etc/swift/container-server /etc/swift/account-server /srv/1/node/sdb1 /srv/2/node/sdb2 /srv/3/node/sdb3 /srv/4/node/sdb4 /var/run/swift
+
+sudo chown -R swift:swift /etc/swift /srv/[1-4]/ /var/run/swift
+
+sudo rm -rf /etc/swift/*
+
+sudo sed '$ i\mkdir -p /var/cache/swift /var/cache/swift2 /var/cache/swift3 /var/cache/swift4' -i /etc/rc.local
+sudo sed '$ i\chown swift:swift /var/cache/swift*' -i /etc/rc.local
+sudo sed '$ i\mkdir -p /var/run/swift' -i /etc/rc.local
+sudo sed '$ i\chown swift:swift /var/run/swift' -i /etc/rc.local
+#sudo \cp -rf /home/swift/webroot/iswift/settings/rc.local /etc/rc.local
+
+sudo cp /home/swift/webroot/iswift/settings/rsyncd.conf /etc/rsyncd.conf
+
+# /etc/default/rsync:  RSYNC_ENABLE=true
+sudo sed 's/RSYNC_ENABLE=false/RSYNC_ENABLE=true/g' -i  /etc/default/rsync
+
+sudo service rsync restart
+
+sudo \cp /home/swift/webroot/iswift/settings/10-swift.conf /etc/rsyslog.d/10-swift.conf
+
+# Edit /etc/rsyslog.conf  $PrivDropToGroup adm
+sudo sed 's/$PrivDropToGroup syslog/$PrivDropToGroup adm/g' -i  /etc/rsyslog.conf
+#sudo \cd -rf /home/swift/webroot/iswift/settings/rsyslog.conf /etc/rsyslog.conf
+
+sudo mkdir -p /var/log/swift/hourly
+
+sudo chown -R syslog.adm /var/log/swift
+
+sudo chmod -R g+w /var/log/swift
+
+sudo service rsyslog restart
+mkdir /home/swift/bin
+#install swift
+sudo git clone https://github.com/openstack/swift.git
+cd ./swift
+sudo python ./setup.py develop
+cd ..
+#sudo git clone https://github.com/openstack/python-swiftclient.git
+mkdir /home/swift/python-swiftclient
+cp -rf /home/swift/webroot/iswift/python-swiftclient/* /home/swift/python-swiftclient/
+cd ./python-swiftclient
+sudo python ./setup.py develop
+cd ..
+
+sed  '$ a export SWIFT_TEST_CONFIG_FILE=/etc/swift/test.conf' -i /home/swift/.bashrc
+sed  '$ a export PATH=${PATH}:/home/swift/bin' -i /home/swift/.bashrc
+. /home/swift/.bashrc
+
+
+sudo \cp -rf /home/swift/webroot/iswift/settings/proxy-server.conf /etc/swift/proxy-server.conf
+sudo \cp -rf /home/swift/webroot/iswift/settings/swift.conf /etc/swift/swift.conf
+
+sudo cp -rf /home/swift/webroot/iswift/settings/servers/* /etc/swift/
+
+sudo cp -rf /home/swift/webroot/iswift/settings/bin/  /home/swift/
+
+sudo chmod +x /home/swift/bin/*
+
+sudo /home/swift/bin/remakerings
+
+sudo /home/swift/bin/startmain
+sudo /home/swift/bin/startrest
+
+
+#install keystone 
+sudo apt-get install -y keystone
+sudo rm /var/lib/keystone/keystone.db
+
+
+
+
+#install mysql
+sudo apt-get install -y python-mysqldb
+#sudo apt-get install -y mysql-server
+#sudo sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mysql/my.cnf
+cat <<MYSQL_PRESEED | debconf-set-selections
+mysql-server-5.1 mysql-server/root_password password ${MYSQL_PWD}
+mysql-server-5.1 mysql-server/root_password_again password ${MYSQL_PWD}
+mysql-server-5.1 mysql-server/start_on_boot boolean true
+MYSQL_PRESEED
+sudo apt-get install -y mysql-server
+sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mysql/my.cnf
+sudo service mysql restart
+
+#local_mysql_install() {
+#	echo "Configuring MySQL for iSwift"
+#
+#	# MySQL - set root user in MySQL to $MYSQL_PWD
+#
+#	cat <<MYSQL_PRESEED | debconf-set-selections
+#mysql-server-5.1 mysql-server/root_password password ${MYSQL_PWD}
+#mysql-server-5.1 mysql-server/root_password_again password ${MYSQL_PWD}
+#mysql-server-5.1 mysql-server/start_on_boot boolean true
+#MYSQL_PRESEED
+#	apt-get install -y mysql-server 2>&1 >> ${LOGFILE}
+#	sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mysql/my.cnf
+#	service mysql restart
+#}
+#local_mysql_install
+
+sudo \cp /home/swift/webroot/iswift/settings/keystone.conf /etc/keystone/keystone.conf
+
+sudo mysql -h 127.0.0.1  -uroot -p"${MYSQL_PWD}" -e "drop DATABASE IF EXISTS keystone;CREATE DATABASE keystone;GRANT ALL ON keystone.* TO 'keystone'@'%' IDENTIFIED BY '12345';FLUSH PRIVILEGES;DELETE FROM mysql.user WHERE Host='localhost' AND User='';DELETE FROM mysql.user WHERE Host='ostk-controller1' AND User='';FLUSH PRIVILEGES;"
+
+sudo service keystone restart
+
+sudo keystone-manage db_sync
+
+function get_id () {
+    echo `$@ | awk '/ id / { print $4 }'`
+}
+
+#[创建openstackDemo项目]
+echo "before execute line $LINENO"
+DSP_DEFAULT_TENANT="Default-Tenant"
+DEFAULT_TENANT=$(get_id keystone --token 61040319871012101X --endpoint http://127.0.0.1:35357/v2.0 tenant-create --name openstackDemo --description $DSP_DEFAULT_TENANT --enabled true)
+echo "DEFAULT_TENANT ID =  $DEFAULT_TENANT"
+#[创建adminUser用户，并加入openstakDemo项目]
+echo "before execute line $LINENO"
+ADMINUSER_ID=$(get_id keystone --token 61040319871012101X --endpoint http://127.0.0.1:35357/v2.0 user-create --tenant_id $DEFAULT_TENANT --name adminUser --pass secretword --enabled true)
+
+#[创建role角色admin和memberRole]
+echo "before execute line $LINENO"
+ADMIN_ROLE=$(get_id keystone --token 61040319871012101X --endpoint http://127.0.0.1:35357/v2.0 role-create --name admin)
+MEMBER_ROLE=$(get_id keystone --token 61040319871012101X --endpoint http://127.0.0.1:35357/v2.0 role-create --name memberRole)
+GUEST_ROLE=$(get_id keystone --token 61040319871012101X --endpoint http://127.0.0.1:35357/v2.0 role-create --name guest)
+#[给adminUser（user id）在 openstackDemo(tenant id)中admin(role id)角色]
+echo "before execute line $LINENO"
+keystone --token 61040319871012101X --endpoint http://127.0.0.1:35357/v2.0 user-role-add --user $ADMINUSER_ID --tenant_id  $DEFAULT_TENANT --role $ADMIN_ROLE
+
+
+#[创建Service Tenant服务，这个里头包含所有的openstack服务]
+echo "before execute line $LINENO"
+SERVICE_TENANT=$(get_id keystone --token 61040319871012101X --endpoint http://127.0.0.1:35357/v2.0 tenant-create --name service --description "Service-Tenant" --enabled true)
+
+#[创建glance用户，到Service Tenant中]
+echo "before execute line $LINENO"
+GLANCE_USER_ID=$(get_id keystone --token 61040319871012101X --endpoint http://127.0.0.1:35357/v2.0 user-create --tenant_id $SERVICE_TENANT --name glance --pass glance --enabled true)
+
+#[给glance用户admin权限,到Service Tenant中]
+echo "before execute line $LINENO"
+keystone --token 61040319871012101X --endpoint http://127.0.0.1:35357/v2.0 user-role-add --user $GLANCE_USER_ID --tenant_id $SERVICE_TENANT --role $ADMIN_ROLE
+
+#[创建nova用户，到Service Tenant中]
+echo "before execute line $LINENO"
+NOVA_USER_ID=$(get_id keystone --token 61040319871012101X --endpoint http://127.0.0.1:35357/v2.0 user-create --tenant_id $SERVICE_TENANT --name nova --pass nova --enabled true)
+#[给nova用户admin权限]
+echo "before execute line $LINENO"
+keystone --token 61040319871012101X --endpoint http://127.0.0.1:35357/v2.0 user-role-add --user $NOVA_USER_ID --tenant_id $SERVICE_TENANT --role $ADMIN_ROLE
+#[创建EC2用户，到Service Tenant中]
+echo "before execute line $LINENO"
+EC2_USER_ID=$(get_id keystone --token 61040319871012101X --endpoint http://127.0.0.1:35357/v2.0 user-create --tenant_id $SERVICE_TENANT --name ec2 --pass ec2 --enabled true)
+#[给EC2用户admin权限]
+echo "before execute line $LINENO"
+keystone --token 61040319871012101X --endpoint http://127.0.0.1:35357/v2.0 user-role-add --user $EC2_USER_ID --tenant_id $SERVICE_TENANT --role $ADMIN_ROLE
+
+#[创建swift-Object Storage Service用户，到Service Tenant中]
+echo "before execute line $LINENO"
+SWIFT_USER_ID=$(get_id keystone --token 61040319871012101X --endpoint http://127.0.0.1:35357/v2.0 user-create --tenant_id $SERVICE_TENANT --name swift --pass swiftpass --enabled true)
+#[给swift-Object Storage Service用户admin权限]
+echo "before execute line $LINENO"
+keystone --token 61040319871012101X --endpoint http://127.0.0.1:35357/v2.0 user-role-add --user $SWIFT_USER_ID --tenant_id $SERVICE_TENANT --role $ADMIN_ROLE
+
+
+
+
+#[定义服务keystone]
+echo "before execute line $LINENO"
+KEYSEONE_SERVICE_ID=$(get_id keystone --token 61040319871012101X  --endpoint http://127.0.0.1:35357/v2.0/  service-create  --name=keystone  --type=identity --description="Keystone-Identity-Service")
+#[设定keystone服务接口]
+echo "before execute line $LINENO"
+keystone --token 61040319871012101X --endpoint http://127.0.0.1:35357/v2.0/ endpoint-create --region RegionOne --service_id=$KEYSEONE_SERVICE_ID --publicurl=http://127.0.0.1:5000/v2.0 --internalurl=http://127.0.0.1:5000/v2.0 --adminurl=http://127.0.0.1:35357/v2.0
+
+#[定义服务Nova Compute Service]
+echo "before execute line $LINENO"
+NOVA_SERVICE_ID=$(get_id keystone --token 61040319871012101X --endpoint http://127.0.0.1:35357/v2.0/ service-create --name=nova --type=compute --description="Nova-Compute-Service")
+#[设定Nova Compute Service服务接口]
+echo "before execute line $LINENO"
+keystone --token 61040319871012101X --endpoint http://127.0.0.1:35357/v2.0/  endpoint-create --region RegionOne --service_id=$NOVA_SERVICE_ID --publicurl='http://127.0.0.1:8774/v2/%(tenant_id)s' --internalurl='http://127.0.0.1:8774/v2/%(tenant_id)s' --adminurl='http://127.0.0.1:8774/v2/%(tenant_id)s'
+#[创建服务Volume service]
+echo "before execute line $LINENO"
+VOLUME_SERVICE_ID=$(get_id keystone --token 61040319871012101X --endpoint http://127.0.0.1:35357/v2.0/ service-create --name=volume --type=volume --description="Nova-Volume-Service")
+#[设定Volume service服务接口]
+echo "before execute line $LINENO"
+keystone --token 61040319871012101X --endpoint http://127.0.0.1:35357/v2.0/ endpoint-create --region RegionOne --service_id=$VOLUME_SERVICE_ID --publicurl='http://127.0.0.1:8776/v1/%(tenant_id)s' --internalurl='http://127.0.0.1:8776/v1/%(tenant_id)s' --adminurl='http://127.0.0.1:8776/v1/%(tenant_id)s'
+
+#[创建服务Glance Image Service]
+echo "before execute line $LINENO"
+GLANCE_SERVICE_ID=$(get_id keystone --token 61040319871012101X --endpoint http://127.0.0.1:35357/v2.0/ service-create --name=glance --type=image --description="Glance-Image-Service")
+#[设定Glance Image Service服务接口]
+keystone --token 61040319871012101X --endpoint http://127.0.0.1:35357/v2.0/ endpoint-create --region RegionOne --service_id=$GLANCE_SERVICE_ID --publicurl=http://127.0.0.1:9292/v1 --internalurl=http://127.0.0.1:9292/v1 --adminurl=http://127.0.0.1:9292/v1
+#[创建服务EC2]
+echo "before execute line $LINENO"
+EC2_SERVICE_ID=$(get_id keystone --token 61040319871012101X --endpoint http://127.0.0.1:35357/v2.0/ service-create --name=ec2 --type=ec2 --description="EC2-Compatibility-Layer")
+#[设定EC2服务接口]
+echo "before execute line $LINENO"
+keystone --token 61040319871012101X --endpoint http://127.0.0.1:35357/v2.0/ endpoint-create --region RegionOne --service_id=$EC2_SERVICE_ID --publicurl=http://127.0.0.1:8773/services/Cloud --internalurl=http://127.0.0.1:8773/services/Cloud --adminurl=http://127.0.0.1:8773/services/Admin
+#[创建服务Swift Object Storage Service]
+echo "before execute line $LINENO"
+SWIFT_SERVICE_ID=$(get_id keystone --token 61040319871012101X --endpoint http://127.0.0.1:35357/v2.0/ service-create --name=swift --type=object-store --description="Object-Storage-Service")
+#[设定Swift Object Storage Service服务接口]
+echo "before execute line $LINENO"
+keystone --token 61040319871012101X --endpoint http://127.0.0.1:35357/v2.0/ endpoint-create --region RegionOne --service_id=$SWIFT_SERVICE_ID --publicurl 'http://127.0.0.1:8888/v1/AUTH_%(tenant_id)s' --adminurl 'http://127.0.0.1:8888/' --internalurl 'http://127.0.0.1:8888/v1/AUTH_%(tenant_id)s'
+
+sudo apt-get install -y curl openssl
+
+curl -d '{"auth": {"tenantName": "adminTenant", "passwordCredentials":{"username": "adminUser", "password": "secretword"}}}' -H "Content-type:application/json" http://127.0.0.1:35357/v2.0/tokens | python -mjson.tool
+
+curl -d '{"auth": {"tenantName": "openstackDemo", "passwordCredentials":{"username": "adminUser", "password": "secretword"}}}' -H "Content-type:application/json" http://127.0.0.1:35357/v2.0/tokens | python -mjson.tool
+
+sudo cp  /home/swift/webroot/iswift/settings/iswift.conf /etc/apache2/conf.d/
+
+sudo mysql -h 127.0.0.1  -uroot -p"${MYSQL_PWD}" -e "drop DATABASE IF EXISTS iswift;CREATE DATABASE iswift default character set utf8;GRANT ALL ON iswift.* TO 'iswift'@'%' IDENTIFIED BY '12345';FLUSH PRIVILEGES;DELETE FROM mysql.user WHERE Host='localhost' AND User='';DELETE FROM mysql.user WHERE Host='ostk-controller1' AND User='';FLUSH PRIVILEGES;"
+
+
+sudo python /home/swift/webroot/iswift/manage.py syncdb
+
+
+sudo mysql -h 127.0.0.1  -uroot -p"${MYSQL_PWD}" -e "use iswift;insert  into folderlist_company_tree(id,name,address,storage_size,used_size,employee_quantity,keystone_tenant,keystone_user_id,keystone_passwd) values (1,'iswift','XIAN',10000,0,10000,'openstackDemo','adminUser','secretword');insert  into folderlist_folder_tree(id,name,type,parentID,isFile,sizebyte,level,companyid,isContainer,competence,MD5string,SHA1string,CRC32string,FileLink,isDeleted) values (1,'BASEROOT',0,0,0,0,1,1,1,10,'','','',0,0);insert  into folderlist_user_storage(id,user_id,name,telephone,storage_size,used_size,companyid,competence) values (1,1,'admin@admin.com','123',10000,0,1,10);insert  into privatefiles_users_folder_tree(id,name,type,parentID,isFile,sizebyte,level,companyid,user_id,isContainer,competence,MD5string,SHA1string,CRC32string,FileLink,isDeleted) values (1,'BASEROOT',0,0,0,0,1,1,1,1,10,'','','',0,0);insert  into folderlist_user_storage(id,user_id,name,telephone,storage_size,used_size,companyid,competence) values (1,1,'admin','123',10000,0,1,10);"
+
+sudo chmod -R 777 /home/swift/*
+sudo /etc/init.d/apache2 restart
+
+keystone --token 61040319871012101X --endpoint http://127.0.0.1:35357/v2.0  user-list
+keystone --token 61040319871012101X --endpoint http://127.0.0.1:35357/v2.0  role-list
+keystone --token 61040319871012101X --endpoint http://127.0.0.1:35357/v2.0  service-list
+keystone --token 61040319871012101X --endpoint http://127.0.0.1:35357/v2.0  tenant-list
+keystone --token 61040319871012101X --endpoint http://127.0.0.1:35357/v2.0  endpoint-list
+
+sudo swift-init main restart
+sudo swift-init rest restart
+
+swift -V 2.0 -A http://127.0.0.1:5000/v2.0 -U openstackDemo:adminUser -K secretword stat
+
+echo "if you see keystone everything-list and swift stat."
+echo "Congratulations.   Install succeed!"
+echo "Admin email: ${ADMIN_EMAIL},Admin password: ${ADMIN_PWD},Mysql root password:${MYSQL_PWD}"
+echo "Now,go to http://127.0.0.1,and register a new Enterprise Account to login!"
+

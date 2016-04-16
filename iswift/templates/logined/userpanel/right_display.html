@@ -1,0 +1,154 @@
+<div id="right_disply">
+    <div id="file_head">
+           <div id="file_controlor">
+            <div id="file_location"><a href="/userdashboard"><img src="/static/img/logo.png" style="width:24px" /></a>{% if file_loaction %} {% for paths  in file_loaction %}<img class="sprite page_icon page_icon_breadcrumb breadcrumb_spacer" src="/static/img/icon_spacer.gif"><a href="{{paths.link}}">{{ paths.name }}</a>{%endfor%}{%else%}根目录{%endif%}</div>
+            <div id="file_controlmenu">
+              <div id="file_search">
+	              <form id="fileserarch" name="fileserarch" method="post" action="/filesystem/filesearch/">{% csrf_token %}
+	                <input id="fileserarch" name="fileserarch" class="form-control" value="file search" onfocus="if(this.value=='file search'){this.value=''}" onblur="if(this.value==''){this.value='file search'}" type="text">
+	              </form>
+              </div>
+              <div id="file_button">
+              <ul class="fileiconbutton">
+                 <li class="pos"><label class="filebtns"><a href="javascript:create_folder('创建文件夹','/userdashboard/folder/create/{% if file_loaction %}{% for paths  in file_loaction %}{{ paths.name }}/{%endfor%}{%endif%}');"><img title="创建文件夹"   class="page_icon page_icon_folder_add"   src="/static/img/icon_spacer.gif"></a></label></li>
+                 <li class="pos"><label class="filebtns"><a href="#myModal" role="button" data-toggle="modal"><img title="上传文件"    class="page_icon page_icon_upload_16"  src="/static/img/icon_spacer.gif"></a></label></li>
+                 <li class="pos"><label class="filebtns"><a href="javascript:dialog_form('分享文件','/userdashboard/file/create/{% if file_loaction %}{% for paths  in file_loaction %}{{ paths.name }}/{%endfor%}{%endif%}');"><img title="分享文件"     class="page_icon page_icon_rainbow_16"  src="/static/img/icon_spacer.gif"></a></label></li>
+                 <li class="pos"><label class="filebtns"><a href="javascript:dialog_form('标记文件','/userdashboard/file/delete/{% if file_loaction %}{% for paths  in file_loaction %}{{ paths.name }}/{%endfor%}{%endif%}');"><img title="星标文件"     class="page_icon  page_icon_show-deleted"  src="/static/img/icon_spacer.gif"></a></label></li>
+                 <li class="pos"><label class="filebtns"><a href=""><i class="icon-certificate"></i></a></label></li>
+              </ul>
+              </div>
+            </div>
+        </div>
+        <div id="file_sort" class="fileclear">
+          <a id="name-sorter" class="file_sort_column_header bolded" style="cursor: pointer; ">
+                        <span style="cursor: pointer; ">名称</span><img src="/static/img/icon_spacer.gif" style="line-height: 100%; cursor: pointer;" alt="" class="sprite page_icon page_icon_sort-downtick-on" border="0">
+          </a>
+          <a id="kind-sorter" class="file_sort_column_header noarrow" style="cursor: pointer; ">
+            <span id="kind-sorter-label" style="cursor: pointer; ">说明</span>
+          </a>
+          <a id="modified-sorter" class="file_sort_column_header bolded" style="cursor: pointer; ">
+            <span style="cursor: pointer; ">大小</span><img src="/static/img/icon_spacer.gif" style="line-height: 100%; cursor: pointer;" alt="" class="sprite page_icon page_icon_sort-downtick-on" border="0">
+          </a>
+        </div>
+        </div><!-- file head end -->
+    <div id="file_detail">
+        <script type="text/javascript" src="/static/js/right_menu.js"></script>
+        <script type="text/javascript">
+                $(function(){
+                    $.contextMenu({
+                        selector: '.browse-file', 
+                        callback: function(key, options) {
+                            //var m = "clicked: " + key;
+                            //window.console && console.log(m) || alert(m);
+                            switch(key)
+                            {
+                            case "edit":create_folder('创建文件夹','/userdashboard/folder/create/{% if file_loaction %}{% for paths  in file_loaction %}{{ paths.name }}/{%endfor%}{%endif%}');break;
+                            case "cut":break;
+                            case "copy":break;
+                            case "delete":
+                                {
+                                    var urls = '/userdashboard/folderfile/delete/{% if file_loaction %}{% for paths  in file_loaction %}{{ paths.name }}/{%endfor%}{%endif%}'+$(this).find("a").text()+'/'
+                                    delete_form('确定要删除吗？',urls);
+                                    break;
+                                }
+                            case "paste":dialog_form('上传文件','/userdashboard/file/create/{% if file_loaction %}{% for paths  in file_loaction %}{{ paths.name }}/{%endfor%}{%endif%}');break;
+                            case "rename":
+                                var filename = $(this).find("a").text();
+                                $(this).find("a").remove();
+                                
+                                var folder_form = document.createElement("form");//背景遮罩层
+                                folder_form.setAttribute("id","form_test");
+                                folder_form.setAttribute("method","post");
+                                folder_form.setAttribute("action",'/userdashboard/folderfile/update/{% if file_loaction %}{% for paths  in file_loaction %}{{ paths.name }}/{%endfor%}{%endif%}'+filename+'/');
+                                document.getElementById(filename).getElementsByTagName("div")[0].appendChild(folder_form);
+                                
+                                var file_form_div = document.createElement("div");
+                                file_form_div.setAttribute("class","file_form_div");
+                                folder_form.appendChild(file_form_div);
+                                
+                                var div_name = document.createElement("div");
+                                div_name.setAttribute("class","div_name");
+                        
+                                var folder_name = document.createElement("input");//背景遮罩层
+                                folder_name.setAttribute("id","id_name");
+                                folder_name.setAttribute("name","id_name");
+                                folder_name.setAttribute("type","text");
+                                folder_name.setAttribute("width","50px");
+                                folder_name.setAttribute("maxlength","255");
+                                folder_name.setAttribute("value",filename);
+                                folder_name.onfocus=function(){if(this.value==filename){this.value=''}}
+                                folder_name.onblur=function(){if(this.value==''){this.value=filename}}
+                                div_name.appendChild(folder_name);
+                                
+                                var old_name = document.createElement("input");//背景遮罩层
+                                old_name.setAttribute("id","old_name");
+                                old_name.setAttribute("name","old_name");
+                                old_name.setAttribute("value",filename);
+                                old_name.style.display="none";
+                                div_name.appendChild(old_name);
+                                
+                                file_form_div.appendChild(div_name);
+                                
+                                var div_btn = document.createElement("div");
+                                div_btn.setAttribute("class","div_btn");
+                                var div_create_btn = document.createElement("div");
+                                div_create_btn.setAttribute("class","div_create_btn");
+                                
+                                var folder_create_btn = document.createElement("input");//背景遮罩层
+                                folder_create_btn.setAttribute('type','submit');
+                                folder_create_btn.setAttribute('value','确定');
+                                folder_create_btn.setAttribute('class',"btn btn-small btn-primary");
+                                
+                                var div_create_cancle = document.createElement("div");
+                                div_create_cancle.setAttribute("class","div_create_btn");
+                                var folder_create_cancle = document.createElement("input");//背景遮罩层
+                                folder_create_cancle.setAttribute('type','button');
+                                folder_create_cancle.onclick=function(){
+                                    window.location.href='/userdashboard/'+'{% if file_loaction %}{% for paths  in file_loaction %}{{ paths.name }}/{%endfor%}{%endif%}';
+                                          }
+                                folder_create_cancle.setAttribute('value','取消');
+                                folder_create_cancle.setAttribute('class',"btn btn-small btn-primary");
+                                
+                                div_create_cancle.appendChild(folder_create_cancle);
+                                div_btn.appendChild(div_create_cancle);
+                                div_create_btn.appendChild(folder_create_btn);
+                                div_btn.appendChild(div_create_btn);
+                                
+                                file_form_div.appendChild(div_btn);
+                                
+                                
+                                break;
+                            default:
+                                break;
+                            }
+                        },
+                        items: {
+                            "edit": {name: "创建文件夹", icon: "edit"},
+                            "paste": {name: "上传文件", icon: "paste"},
+                            "sep1": "---------",
+                            "copy": {name: "复制文件", icon: "copy"},
+                            "cut": {name: "剪切文件", icon: "cut"},
+                            "rename": {name: "重命名", icon: "quit"},
+                            "delete": {name: "删除文件", icon: "delete"}
+                        }
+                    });
+                    $('.browse-file').on('click', function(e){
+                        console.log('clicked', this);
+                        //alert(this)
+                    })
+                });
+        </script>
+		<ol id="file_list_ui">
+		    {% if containers %}
+		             {% for container  in containers %}
+			             <li class="browse-file box menu-1" id="{{container.name}}" value="{%if container.isFile%}file{%else%}folder{% endif %}"><div class="filename-col"  id="filename-div"><img   class="icon page_icon_file_32 page_icon_file_np {%if container.isFile%}page_icon_file_tp{{container.type}}  {%else%}page_icon_folder_32 {% endif %}"   title="{{ container.name }}" draggable="true" src="/static/img/icon_spacer.gif ">
+			             <a id="namelink" title="{%if container.isFile%}点击下载{% endif %}" href="{%if container.isFile%} get_file/download/{{container.name}}  {%else%} {{container.name}}/ {% endif %} " target="_self">{{ container.name }}</a></div>
+			             <div class="kind"><span class="category">{%if container.isFile%}点击文件名下载{%else%}folder{% endif %}</span><span class="extension secondary"></span></div>
+			             <div class="modified"><span class="modified-time">{{container.sizebyte|filesizeformat}}</span><a href="#"  class="shmodel-file title_bubble"  style="margin-right: 0px;width: 20px;"  title="Get link"><img class="  page_icon  page_icon_link18"  src="/static/img/icon_spacer.gif"></a></div><br class="clear"></li>
+		            {% endfor %}
+		    {%else%}
+		      <li class="browse-file box"><h4><small>文件夹是空的</small></h4></li>
+		    {% endif %}
+		</ol> 
+    </div><!-- file detail end -->
+</div><!-- right display end -->

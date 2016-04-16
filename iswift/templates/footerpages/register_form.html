@@ -1,0 +1,76 @@
+<script type="text/javascript" src='/static/js/form_test.js' ></script>
+<script type="text/javascript" src='/static/js/form_zz.js' ></script>
+<script type="text/javascript" src='/static/js/form_tim.js' ></script>
+<link rel='stylesheet' href='/static/css/form_test.css' type='text/css'>
+<script type="text/javascript">
+$(document).ready(function(){
+    $.formValidator.initConfig({formid:"register_form",debug:false,submitonce:true,
+        onerror:function(msg,obj,errorlist){
+            //$.map(errorlist,function(msg1){alert(msg1)});
+            alert(msg);
+        }
+    });
+
+    $("#username").formValidator({tipid:"usernameinfo",onshow:"请输入超级管理员email地址",onfocus:"请输入e-mail地址",oncorrect:"e-mail地址正确"}).inputValidator({min:5,empty:{leftempty:false,rightempty:false,emptyerror:"地址前后有空格！"},onerror:"你输入的邮箱长度非法,请确认.请输入超级管理员email地址"}).regexValidator({regexp:"^([\\w-.]+)@(([[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.)|(([\\w-]+.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(]?)$",onerror:"你输入的邮箱格式不正确"});
+    $("#telephone").formValidator({tipid:"telephoneinfo",onshow:"请输入你的手机或电话，不能为空！",onfocus:"格式例如：029-88888888或11位手机号码",oncorrect:"谢谢你的合作",onempty:"请输入手机号码！"}).regexValidator({regexp:["tel","mobile"],datatype:"enum",onerror:"你输入的手机或电话格式不正确.格式例如：029-88888888或11位手机号码"});
+    $("#password").formValidator({tipid:"passwordinfo",onshow:"请输入密码",onfocus:"至少1个长度",oncorrect:"密码合法"}).inputValidator({min:1,empty:{leftempty:false,rightempty:false,emptyerror:"密码两边不能有空符号"},onerror:"密码不能为空,请确认"});
+    $("#confirm").formValidator({tipid:"confirminfo",onshow:"输再次输入密码",onfocus:"至少1个长度",oncorrect:"密码一致"}).inputValidator({min:1,empty:{leftempty:false,rightempty:false,emptyerror:"重复密码两边不能有空符号"},onerror:"重复密码不能为空,请确认"}).compareValidator({desid:"password",operateor:"=",onerror:"2次密码不一致,请确认"});
+    $("#companyname").formValidator({tipid:"companynameinfo",onshow:"您实际注册的企业或组织名称中文、英文和数字组合",onfocus:"请正确输入公司名称",oncorrect:"格式正确"}).inputValidator({min:1,max:100,onerror:"您输入的长度非法,请确认.您实际注册的企业或组织名称中文、英文和数字组合"}).regexValidator({regexp:"^[\u4E00-\u9FA5A-Za-z0-9_ -.,#]+$",onerror:"名称格式非法！"});
+    $("#companytenant").formValidator({tipid:"companytenantinfo",onshow:"请输入租户名",onfocus:"请正确输入公司租户名",oncorrect:"格式正确"}).inputValidator({min:1,max:100,onerror:"您输入的长度非法,请确认.只能是英文和数字组合."}).regexValidator({regexp:"^[0-9a-zA-Z]*$",onerror:"只能输入英文字母和数字！"}); 	    
+    $("#companyaddress").formValidator({tipid:"companyaddressinfo",onshow:"请输入用户名",onfocus:"请正确输入公司地址",oncorrect:"格式正确"}).inputValidator({min:1,max:100,onerror:"您输入的长度非法,请确认"}).regexValidator({regexp:"^[\u4E00-\u9FA5A-Za-z0-9_ -#]+$",onerror:"地址格式非法！"});
+    $("#companysize").formValidator({tipid:"companysizeinfo",onshow:"请选择公司规模",onfocus:"公司规模必须选择",oncorrect:"正确",defaultvalue:"0"}).inputValidator({min:1,onerror: "您没有选择公司规模!"});//.compareValidator({regexp:"^0$",operateor:"=",onerror:"2次密码不一致,请确认"});
+    $("#companyusers").formValidator({tipid:"companyusersinfo",onshow:"请选择公司人数",onfocus:"公司人数必须选择",oncorrect:"正确",defaultvalue:"0"}).inputValidator({min:1,onerror: "您没有选择公司人数!"});//compareValidator({regexp:"^0$",operateor:"=",onerror:"2次密码不一致,请确认"});
+    
+});
+</script>
+<div id="register_form_id" class="panel panel-primary">
+    <div class="panel-heading">
+         <h3 class="panel-title">注册</h3>
+  </div>
+	<form id="register_form" action="/register/"  method="post" >{% csrf_token %}
+	      <div class="modal-body clearfix">
+	      {% include "_messages.html" %}
+	      	<div ><label for="id_username"><h4>企业租户管理员:</h4></label></div>
+	      	   <div ><label for="id_username"><strong>请填写下面的表单增加企业超级管理员。<label style="color:red;">所有项目都为必填项。</label></strong></label></div>
+	           <div class="input-group input_margin"><label for="id_telephone"  class="input-group-addon">用户名(请填写email地址): </label><input type="text" id="username" name="username" value="{{ username }}" class="form-control" style=" width:350px;" ><div class="onError" id="usernameinfo"></div></div>
+	           <div class="input-group input_margin"><label for="id_username"  class="input-group-addon">电话:</label><input type="tel" id="telephone" name="telephone" value="{{ telephone }}" class="form-control" style=" width:350px;" ><div class="onError" id="telephoneinfo"></div></div>
+	           <div class="input-group input_margin"><label for="id_password"  class="input-group-addon">密码:</label><input type="password" id="password" name="password" value="{{ password }}" class="form-control" style=" width:350px;" ><div class="onError" id="passwordinfo"></div></div>
+	           <div class="input-group input_margin"><label for="id_confirm"  class="input-group-addon">确认密码:</label><input type="password" id="confirm" name="confirm" value="{{ confirm }}" class="form-control"  style=" width:350px;" ><div class="onError" id="confirminfo"></div></div>
+	           
+	        <div ><label for="id_username"><h4>企业信息:</h4></label></div>
+	           <div ><label for="id_username"><strong>请填写下面的表单增加公司的存储帐户基本信息。<label style="color:red;">所有项目都为必填项。</label></strong></label></div>
+	           <div class="input-group input_margin"><label for="id_username"  class="input-group-addon">企业名称:</label><input type="text" id="companyname" name="companyname" value="{{ companyname }}" class="form-control"  style=" width:350px;" ><div class="onError" id="companynameinfo"></div></div>
+	           <div class="input-group input_margin"><label for="id_username"  class="input-group-addon">企业租户名称:</label><input type="text" id="companytenant" name="companytenant" value="{{ companytenant }}" class="form-control" style=" width:350px;" ><div class="onError" id="companytenantinfo"></div></div>
+	           <div class="input-group input_margin"><label for="id_password"  class="input-group-addon">企业地址:</label><input type="text" id="companyaddress" name="companyaddress" value="{{ companyaddress }}" class="form-control"  style=" width:350px;" ><div class="onError" id="companyaddressinfo"></div></div>
+	           <div class="input-group input_margin"><label for="id_password"  class="input-group-addon">申请空间GB:</label><select type="number" id="companysize" name="companysize"  class="form-control"  style=" width:363px;" > 
+																				            <option value="0">请选择...</option>
+																				            <!-- <option value="1024">1GB</option>
+																				            <option value="5120">5GB</option>
+																							<option value="10240">10GB</option> -->
+																							<option value="50">50GB</option>
+																							<option value="100">100GB</option>
+																							<option value="500">500GB</option>
+																							<option value="1024">1TB</option>
+																							<option value="5120">5TB</option>
+																							<option value="10240">10TB</option>
+																							<option value="51200" >50TB</option>
+																							<option value="102400">100TB</option>
+																							<option value="204800">>100TB，联系我们</option>
+																					    </select><div class="onError" id="companysizeinfo" ></div>
+			   </div>
+	           <div class="input-group input_margin"><label for="id_confirm"  class="input-group-addon">公司或者组织规模:</label><select  type="number" class="form-control" id="companyusers" name="companyusers"  style=" width:363px;" >
+																						           <option value="0">请选择...</option>
+																						           <option value="20">20人以下</option>
+																						           <option value="99">20-99人</option>
+																					               <option value="499">100-499人 </option>
+																					               <option value="999">500-999人</option>
+																					               <option value="9999">1000-9999人</option>
+																					               <option value="10000">10000人以上</option>
+                                                                                            </select><div class="onError" id="companyusersinfo"></div>
+	           </div>
+	      </div>
+	      <div class="modal-footer">
+		<button type="submit" class="btn btn-primary"> 注 册 </button>
+		   </div>
+	</form>
+</div>

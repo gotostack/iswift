@@ -1,0 +1,11 @@
+{% if footer_lefts %}
+<div class="nav">
+	<ul>
+		<li>Jump to question:</li>
+		<li><a href="#link-0">Howtos</a></li>
+		{% for footer_left  in footer_lefts %}
+		<li><a href="#{{footer_left.link}}">{{footer_left.title}}</a></li>
+		{% endfor %}	
+	</ul>
+</div>
+{% endif %}

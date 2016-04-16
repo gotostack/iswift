@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}iSwift-超级管理员-Spaces{% endblock %}
+{% block headinfo %}欢迎,<b>{{ username }}</b>. | <a href="/logout">退出</a>{% endblock %}
+{% block content %}
+    {% block leftmenu %}
+    {% include "logined/admintemplates/superadmin/super_left_menu.html" %}
+    {% endblock %}
+    {% block maininfo %}
+<div id="right_disply">
+	<form id="register_form" action=""  method="post" >{% csrf_token %}
+		<div class="panel panel-info">
+			<div class="panel-heading">
+			          <h3 class="panel-title"><img src="/static/img/fatcow/32_32/chart_curve.png"> 最近登录情况<small></small></h3>
+			</div>
+	        <div id="file_sort" class="fileclear">
+	          <a id="name-sorter" class="file_sort_column_header bolded" style="cursor: pointer; ">
+	                        <span style="cursor: pointer; ">公司名称</span><img src="/static/img/icon_spacer.gif" style="line-height: 100%; cursor: pointer;" alt="" class="sprite page_icon page_icon_sort-downtick-on" border="0">
+	          </a>
+	          <a id="kind-sorter" class="file_sort_column_header noarrow" style="cursor: pointer; ">
+	            <span id="kind-sorter-label" style="cursor: pointer; ">空间大小</span>
+	          </a>
+	          <a id="modified-sorter" class="file_sort_column_header bolded" style="cursor: pointer; ">
+	            <span style="cursor: pointer; ">员工数量</span><img src="/static/img/icon_spacer.gif" style="line-height: 100%; cursor: pointer;" alt="" class="sprite page_icon page_icon_sort-downtick-on" border="0">
+	          </a>
+	        </div>
+	        <div id="file_detail">
+		        {% if companys %}
+		            <ol id="file_list_ui">
+		            {% for cmpuser  in companys %}
+		                 <li class="browse-file"><div class="filename-col"><input type="checkbox"><img   class="page_icon  icon page_icon_superspaceadmin_20"   title="{{ cmpuser.name }}" draggable="true" src="/static/img/icon_spacer.gif "  height="20px" width="26px">
+		                 <a href="{%if cmpuser.isFile%} get_file/download/{{cmpuser.name}}  {%else%} {{cmpuser.name}}/ {% endif %} " target="_self">{{ cmpuser.name }}</a></div>
+		                 <div class="kind"><span class="category">{{ cmpuser.storage_size|filesizeformat }}</span><span class="extension secondary"></span></div>
+		                 <div class="modified"><span class="modified-time">{{ cmpuser.employee_quantity }}</span></div><br class="clear"></li>
+		            {% endfor %}
+		            </ol> 
+		        {% endif %}
+	        </div>
+        </div>
+		<div class="panel panel-warning">
+			<div class="panel-heading">
+			          <h3 class="panel-title">空间使用量<small>--单位(GB)(1TB=1024GB,1GB=1024MB,1MB=1024KB,1KB=1024Bytes)</small></h3>
+			</div>
+			
+			
+			<div class="row">
+				<div class="col-sm-8">
+			        {% include "logined/admintemplates/charts/platform_storage.html" %}
+			    </div>   
+			        
+				        
+				        <div class="col-sm-6 col-md-4">
+				          <div class="thumbnail">
+				            <img data-src="holder.js/300x200" alt="300x200" style="width: 300px; height: 200px;" src="data:image/png;base64,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">
+				            <div class="caption">
+				              <h3>Thumbnail label</h3>
+				              <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+				              <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>
+				            </div>
+				          </div>
+				        </div>
+				        
+			</div>
+		</div>
+		<div class="panel panel-warning">
+			<div class="panel-heading">
+			          <h3 class="panel-title">空间使用量<small>--单位(GB)(1TB=1024GB,1GB=1024MB,1MB=1024KB,1KB=1024Bytes)</small></h3>
+			</div>
+			{% if errors %}
+	                <ul>
+	                    {% for error in errors %}
+	                    <li style="color: red;"><b>{{ error }}</b></li>
+	                    {% endfor %}
+	                </ul>
+	        {% endif %}
+	        <div class="modal-body clearfix">
+	                    <div ><label for="id_username"><h3>企业租户管理员:</h3></label></div>
+	                    <div class="input-group input_margin">
+	                       <label style="font-size:15px;font-weight:600">申请版本级别:</label><select name="select" class="form-control" id="select">
+	                                        <option value="0">请选择...</option>
+	                                        <option value="1">10个版本，5个版本永久备份</option>
+	                                        <option value="2">20个版本，10个版本永久备份</option>
+	                                        <option value="3">50个版本，25个版本永久备份</option>
+	                                        <option value="3">100个版本，50个版本永久备份</option>
+	                                        <option value="4">无限制版本和备份数量，联系我们</option>
+	                                      </select>
+	                    </div>
+	                    <div><label for="id_username"><h3>提供管理员口令:</h3></label></div>
+	                       <div class="input-group input_margin"><label for="id_username" class="input-group-addon">公司管理员:</label><input type="text" class="form-control"  name="companyname" value="{{ companyname }}" class="form-control" style=" width:350px;" ></div>
+	                       <div class="input-group input_margin"><label for="id_password" class="input-group-addon">密码:</label><input type="text" name="companysize" value="{{ companysize }}" class="form-control" style=" width:350px;" ></div>
+	                    </div>
+	                  <div class="modal-footer">
+	                		<button type="submit" class="btn btn-primary"> 提 交 </button>
+	                  </div>
+	        </div>
+		</div>
+	</form>
+</div>
+    {% endblock %}
+{% endblock %}

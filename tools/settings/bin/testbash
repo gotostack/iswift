@@ -1,0 +1,5 @@
+#!/bin/bash
+opt='RSYNC_ENABLE'
+#sed  "s/$opt=\S/$opt=true/" ~/test.conf
+
+sed 's/RSYNC_ENABLE=false/RSYNC_ENABLE=true/g' -i  ~/test.conf

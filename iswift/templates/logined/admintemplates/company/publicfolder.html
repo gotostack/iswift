@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}iSwift-企业租户-公共目录{% endblock %}
+{% block headinfo %}欢迎,<b>{{ username }}</b>. | <a href="/logout">退出</a>{% endblock %}
+{% block content %}
+    {% block leftmenu %}
+    {% include "logined/admintemplates/company/company_left_menu.html" %}
+    {% endblock %}
+    {% block maininfo %}
+	    <div id="right_disply">
+	        <div class="panel panel-info">
+				<div class="panel-heading">
+				          <h3 class="panel-title"><img src="/static/img/fatcow/32_32/chart_curve.png"> 公共目录<small></small></h3>
+				</div>
+			    <div id="file_sort" class="fileclear">
+		          <a id="name-sorter" class="file_sort_column_header bolded" style="cursor: pointer; ">
+		                        <span style="cursor: pointer; ">名称</span><img src="/static/img/icon_spacer.gif" style="line-height: 100%; cursor: pointer;" alt="" class="sprite page_icon page_icon_sort-downtick-on" border="0">
+		          </a>
+		          <a id="kind-sorter" class="file_sort_column_header noarrow" style="cursor: pointer; ">
+		            <span id="kind-sorter-label" style="cursor: pointer; ">类型</span>
+		          </a>
+		          <a id="modified-sorter" class="file_sort_column_header bolded" style="cursor: pointer; ">
+		            <span style="cursor: pointer; ">大小</span><img src="/static/img/icon_spacer.gif" style="line-height: 100%; cursor: pointer;" alt="" class="sprite page_icon page_icon_sort-downtick-on" border="0">
+		          </a>
+		        </div>
+		        <div id="file_detail">
+			        {% if containers %}
+			            <ol id="file_list_ui">
+			            {% for container  in containers %}
+			                 <li class="browse-file"><div class="filename-col"><img   class="page_icon  icon {%if container.isFile%}page_icon_page_white_word_32  {%else%}page_icon_folder_32 {% endif %}"   title="{{ container.name }}" draggable="true" src="/static/img/icon_spacer.gif "  height="20px" width="26px">
+			                 <a href="{%if container.isFile%} get_file/download/{{container.name}}  {%else%} {{container.name}}/ {% endif %} " target="_self">{{ container.name }}</a></div>
+			                 <div class="kind"><span class="category">{%if container.isFile%}file{%else%}folder{% endif %}</span><span class="extension secondary"></span></div>
+			                 <div class="modified"><span class="modified-time">{%if container.isFile%}{{container.sizebyte|filesizeformat}}  {%else%}文件夹{% endif %}</span><a href="#"  class="shmodel-file title_bubble"  style="margin-right: 0px;width: 20px;"  title="Get link"><img class="  page_icon  page_icon_link18"  src="/static/img/icon_spacer.gif"></a></div><br class="clear"></li>
+			            {% endfor %}
+			            </ol> 
+			        {% endif %}
+			        <p>公共目录列表</p>
+			    </div>
+	        </div>
+	    </div><!-- right display结束 -->
+    {% endblock %}
+{% endblock %}

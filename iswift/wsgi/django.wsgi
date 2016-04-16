@@ -1,5 +1,3 @@
-# Copyright iSwfit
-#
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
 #    a copy of the License at
@@ -15,7 +13,7 @@
 import logging
 import os
 import sys
-from django.core.wsgi import get_wsgi_application
+import django.core.handlers.wsgi
 from django.conf import settings
 
 # Add this file path to sys.path in order to import settings
@@ -23,6 +21,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), '..
 os.environ['DJANGO_SETTINGS_MODULE'] = 'iswift.settings'
 sys.stdout = sys.stderr
 
+sys.path.append("/home/swift/webroot/iswift/")
+
 DEBUG = False
 
-application = get_wsgi_application()
+application = django.core.handlers.wsgi.WSGIHandler()

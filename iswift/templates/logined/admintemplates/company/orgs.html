@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}iSwift-企业租户-组织机构管理{% endblock %}
+{% block headinfo %}欢迎,<b>{{ username }}</b>. | <a href="/logout">退出</a>{% endblock %}
+{% block content %}
+    {% block leftmenu %}
+    {% include "logined/admintemplates/company/company_left_menu.html" %}
+    {% endblock %}
+    {% block maininfo %}
+	<div id="right_disply">
+	     <div class="panel panel-info">
+			<div class="panel-heading">
+			          <h3 class="panel-title"><img src="/static/img/fatcow/32_32/reseller_programm.png">组织机构列表<small></small></h3>
+			</div>
+		    <div id="file_sort" class="fileclear">
+	          <a id="name-sorter" class="file_sort_column_header bolded" style="cursor: pointer; ">
+	                        <span style="cursor: pointer; ">账户</span><img src="/static/img/icon_spacer.gif" style="line-height: 100%; cursor: pointer;" alt="" class="sprite page_icon page_icon_sort-downtick-on" border="0">
+	          </a>
+	          <a id="kind-sorter" class="file_sort_column_header noarrow" style="cursor: pointer; ">
+	            <span id="kind-sorter-label" style="cursor: pointer; ">级别</span>
+	          </a>
+	          <a id="modified-sorter" class="file_sort_column_header bolded" style="cursor: pointer; ">
+	            <span style="cursor: pointer; ">空间概况</span><img src="/static/img/icon_spacer.gif" style="line-height: 100%; cursor: pointer;" alt="" class="sprite page_icon page_icon_sort-downtick-on" border="0">
+	          </a>
+	        </div>
+	        <div id="file_detail">
+	        {% if companyusers %}
+	            <ol id="file_list_ui">
+	            {% for cmpuser  in companyusers %}
+		             <li class="browse-file"><div class="filename-col"><img   class="page_icon  icon page_icon_administorator_20"   title="{{ cmpuser.name }}" draggable="true" src="/static/img/icon_spacer.gif "  height="20px" width="26px">
+		             <a href="{%if cmpuser.isFile%} get_file/download/{{cmpuser.name}}  {%else%} {{cmpuser.name}}/ {% endif %} " target="_self">{{ cmpuser.name }}</a></div>
+		             <div class="kind"><span class="category">{{ cmpuser.competence }}</span><span class="extension secondary"></span></div>
+		             <div class="modified"><span class="modified-time">{{ cmpuser.used_size }}/{{ cmpuser.storage_size }}(MB)</span></div><br class="clear"></li>
+	            {% endfor %}
+	            </ol> 
+	        {% endif %}
+	        </div>
+	    </div>
+		<div class="panel panel-info">
+			<div class="panel-heading">
+			          <h3 class="panel-title"><img src="/static/img/fatcow/32_32/reseller_programm.png">组织机构管理<small>--企业用户空间权限管理</small></h3>
+			</div>
+			{% include "_messages.html" %}
+		    <script type="text/javascript" src='/static/js/form_test.js' ></script>
+			<script type="text/javascript" src='/static/js/form_zz.js' ></script>
+			<script type="text/javascript" src='/static/js/form_tim.js' ></script>
+			<link rel='stylesheet' href='/static/css/form_test.css' type='text/css'>
+			<script type="text/javascript">
+			$(document).ready(function(){
+			    $.formValidator.initConfig({formid:"register_form",debug:false,submitonce:true,
+			        onerror:function(msg,obj,errorlist){
+			            //$.map(errorlist,function(msg1){alert(msg1)});
+			            alert(msg);
+			        }
+			    });
+			    $("#optselect").formValidator({tipid:"optselectinfo",onshow:"请选择操作类型",onfocus:"操作类型必须选择",oncorrect:"操作类型正确",defaultvalue:"0"}).inputValidator({min:1,onerror: "您没有选择公司规模!"});
+			    $("#telephone").formValidator({tipid:"telephoneinfo",onshow:"请输入你的手机或电话，不能为空！",onfocus:"格式例如：029-88888888或11位手机号码",oncorrect:"谢谢你的合作",onempty:"请输入手机号码！"}).regexValidator({regexp:["tel","mobile"],datatype:"enum",onerror:"你输入的手机或电话格式不正确"});
+			    $("#newusername").formValidator({tipid:"newusernameinfo",onshow:"用户姓名，不能为空！",onfocus:"中文英文不能出现数字和符号",oncorrect:"谢谢你的合作",onempty:"请输入用户姓名"}).inputValidator({min:4,empty:{leftempty:false,rightempty:false,emptyerror:"地址前后有空格！"},onerror:"不能小于4个字符,请确认"});
+                $("#useremail").formValidator({tipid:"useremailinfo",onshow:"作为这个用户的登录帐号，不能为空！",onfocus:"格式例如：abc@example.com",oncorrect:"谢谢你的合作",onempty:"请用户电子邮箱地址！",oncorrect:"e-mail地址正确"}).inputValidator({min:5,empty:{leftempty:false,rightempty:false,emptyerror:"地址前后有空格！"},onerror:"你输入的邮箱长度非法,请确认"}).regexValidator({regexp:"^([\\w-.]+)@(([[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.)|(([\\w-]+.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(]?)$",onerror:"你输入的邮箱格式不正确"});
+			    $("#competence").formValidator({tipid:"competenceinfo",onshow:"请选择公司规模",onfocus:"公司规模必须选择",oncorrect:"正确",defaultvalue:"0"}).inputValidator({min:1,onerror: "您没有选择用户权限!"});//.compareValidator({regexp:"^0$",operateor:"=",onerror:"2次密码不一致,请确认"});
+			    $("#storagespace").formValidator({tipid:"storageinfo",onshow:"请选择公司人数",onfocus:"公司人数必须选择",oncorrect:"正确",defaultvalue:"0"}).inputValidator({min:1,onerror: "您没有选择用户拥有的存储空间大小!"});//compareValidator({regexp:"^0$",operateor:"=",onerror:"2次密码不一致,请确认"});
+			    $("#userpassword").formValidator({tipid:"passwordinfo",onshow:"请输入密码",onfocus:"至少1个长度",oncorrect:"密码合法"}).inputValidator({min:1,empty:{leftempty:false,rightempty:false,emptyerror:"密码两边不能有空符号"},onerror:"密码不能为空,请确认"});
+                $("#passwordconfirm").formValidator({tipid:"confirminfo",onshow:"输再次输入密码",onfocus:"至少1个长度",oncorrect:"密码一致"}).inputValidator({min:1,empty:{leftempty:false,rightempty:false,emptyerror:"重复密码两边不能有空符号"},onerror:"重复密码不能为空,请确认"}).compareValidator({desid:"userpassword",operateor:"=",onerror:"2次密码不一致,请确认"});
+            });
+			</script>
+		    <form id="register_form" action="/mng/companyadmin/orgs/modify/"  method="post" >{% csrf_token %}
+		          <div class="modal-body clearfix">
+		            <div ><label for="id_username"><h3>企业租户管理员操作:</h3></label></div>
+		            <div class="input-group input_margin">
+		               <label for="id_username"  class="input-group-addon">操作类型:</label><select type="number" id="optselect" name="optselect"  class="form-control"  style=" width:363px;">
+                                        <option value="0">请选择...</option>
+                                        <option value="1">增加</option>
+                                        <option value="2">修改</option>
+                                        <option value="3">删除</option>
+                                        <option value="4">查询</option>
+                                      </select>
+		            <div class="onError" id="optselectinfo"></div></div>
+		            <div><label for="id_username"><h3>企业用户信息:</h3></label></div>
+		               <div class="input-group input_margin"><label for="id_newusername"  class="input-group-addon">姓名:</label><input type="text" id="newusername" name="newusername" value="{{ newusername }}" class="form-control" style=" width:350px;" ><div class="onError" id="newusernameinfo"></div></div>
+		               <div class="input-group input_margin"><label for="id_email"  class="input-group-addon">E-mail:</label><input type="text" id="useremail" name="useremail" value="{{ useremail }}" class="form-control" style=" width:350px;" ><div class="onError" id="useremailinfo"></div></div>
+		               <div class="input-group input_margin"><label for="id_username"  class="input-group-addon">电话:</label><input type="tel" id="telephone" name="telephone" value="{{ telephone }}" class="form-control" style=" width:350px;" ><div class="onError" id="telephoneinfo"></div></div>
+                       <div class="input-group input_margin"><label for="id_competence"  class="input-group-addon">级别:</label>
+			               <select type="number" id="competence" name="competence" class="form-control" style=" width:363px;"> 
+                                                                                            <option value="0">请选择...</option>
+                                                                                            <option value="1">黑名单</option>
+                                                                                            <option value="2">访客</option>
+                                                                                            <option value="3">贵宾</option>
+                                                                                            <option value="4">读者</option>
+                                                                                            <option value="5">接收者</option>
+                                                                                            <option value="6">存储者</option>
+                                                                                            <option value="7">部门管理员</option>
+                                                                                            <option value="8">子公司管理员</option>
+                                                                                            <option value="9">地区管理员</option>
+                                                                                            <option value="10">超级无敌管理员</option>
+                                                                                        </select>
+		               <div class="onError" id="competenceinfo"></div></div>
+		               <div class="input-group input_margin"><label for="id_storagespace"  class="input-group-addon">最大空间:</label>
+					               <select type="storagespace" id="storagespace" name="storagespace" class="form-control" style=" width:363px;"> 
+                                                                                            <option value="0">请选择...</option>
+                                                                                            <option value="1024">1GB</option>
+                                                                                            <option value="2048">2GB</option>
+                                                                                            <option value="5120">5GB</option>
+                                                                                            <option value="10240">10GB</option>
+                                                                                            <option value="102400">100GB</option>
+                                                                                        </select>
+		               <div class="onError" id="storageinfo"></div></div>
+		               <div class="input-group input_margin"><label for="id_password"  class="input-group-addon">密码:</label><input type="password" id="userpassword" name="userpassword" value="{{ userpassword }}" class="form-control" style=" width:350px;" ><div class="onError" id="passwordinfo"></div></div>
+                       <div class="input-group input_margin"><label for="id_confirm"  class="input-group-addon">确认密码:</label><input type="password" id="passwordconfirm" name="passwordconfirm" value="{{ passwordconfirm }}" class="form-control" style=" width:350px;" ><div class="onError" id="confirminfo"></div></div>
+		          </div>
+		          <div class="modal-footer">
+		        <button type="submit" class="btn btn-primary"> 提 交 </button>
+		           </div>
+		    </form>
+		 </div>
+    </div><!-- right display结束 -->
+    {% endblock %}
+{% endblock %}

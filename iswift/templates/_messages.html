@@ -1,0 +1,31 @@
+{% if messages %}
+{% load i18n %}
+<div class="messages">
+{% for message in messages %}
+  {% if "info" in message.tags %}
+    <div class="alert alert-info fade in">
+      <a class="close" data-dismiss="alert" href="#">&times;</a>
+      <p style="margin: 0px 0px 4px auto;"><img src="/static/img/famfamfam/comments.png"> <strong>{% trans "信息: " %}</strong>{{ message }}</p>
+    </div>
+  {% endif %}
+  {% if "warning" in message.tags %}
+    <div class="alert alert-warning fade in">
+      <a class="close" data-dismiss="alert" href="#">&times;</a>
+      <p style="margin: 0px 0px 4px auto;"><img src="/static/img/famfamfam/error.png"> <strong>{% trans "警告: " %}</strong>{{ message }}</p>
+    </div>
+  {% endif %}
+  {% if "success" in message.tags %}
+    <div class="alert alert-success fade in">
+      <a class="close" data-dismiss="alert" href="#">&times;</a>
+      <p style="margin: 0px 0px 4px auto;"><img src="/static/img/famfamfam/accept.png"> <strong>{% trans "成功: " %}</strong>{{ message }}</p>
+    </div>
+  {% endif %}
+  {% if "error" in message.tags %}
+    <div class="alert alert-error fade in">
+      <a class="close" data-dismiss="alert" href="#">&times;</a>
+      <p style="margin: 0px 0px 4px auto;"><img src="/static/img/famfamfam/exclamation.png"> <strong>{% trans "错误: " %}</strong>{{ message }}</p>
+    </div>
+  {% endif %}
+{% endfor %}
+</div>
+{% endif %}

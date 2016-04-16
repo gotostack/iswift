@@ -1,0 +1,131 @@
+<script type="text/javascript" id="chart4">
+$(function () {
+    AmCharts.ready(function () {
+            getData();
+            createChart();
+        });
+    reloadData();
+});
+var lineChartData = [{date: 1,value: 1,value3: 1,value2: 1}];
+var chart4;
+var categoryAxis;
+var valueAxis;
+var valueAxis2;
+var valueAxis3;
+var graph;
+var graph2;
+var graph3;
+var chartCursor;
+var list = [];
+function getData(){
+	$.ajax({  
+	    type: "GET",  
+	    url: "/mng/d/data/networkdata/",  
+	    success: function(msg){
+	    //这里认为msg为json对象  
+	    //需要将json对象转换成类似上面的chartData变量的数组  
+	    list = eval(msg);
+	    lineChartData = list;
+    }  
+ });  
+};
+function setData(){chart4.dataProvider =lineChartData;};
+function createChart(){
+                // sometimes we need to set margins manually
+                // autoMargins should be set to false in order chart4 to use custom margin values
+                chart4 = new AmCharts.AmSerialChart();
+                setData();
+                chart4.pathToImages = "/static/img/images/";
+                chart4.categoryField = "date";
+                 
+                // chart4.addTitle("网络吞吐量(mbps)", 12);  
+                chart4.columnWidth=0.5;
+                chart4.autoMargins = false;
+                chart4.marginRight = 0;
+                chart4.marginLeft = 0;
+                chart4.marginBottom = 0;
+                chart4.marginTop = 0;
+
+                // AXES
+                // category                
+                categoryAxis = chart4.categoryAxis;
+                // categoryAxis.parseDates = true; // as our data is date-based, we set parseDates to true
+                // categoryAxis.minPeriod = "DD"; // our data is daily, so we set minPeriod to DD
+                categoryAxis.inside = true;
+                categoryAxis.gridAlpha = 0;
+                categoryAxis.tickLength = 0;
+                categoryAxis.axisAlpha = 0;
+
+                // value
+                valueAxis = new AmCharts.ValueAxis();
+                valueAxis.dashLength = 1;
+                valueAxis.inside = true;
+                valueAxis.tickLength = 0;
+                valueAxis.axisAlpha = 0;
+                valueAxis.minimum = 1;
+                valueAxis.maximum = 100;
+                chart4.addValueAxis(valueAxis);
+
+                // GRAPH
+                graph = new AmCharts.AmGraph();
+                graph.type = "smoothedLine";
+                graph.valueField = "value";
+                graph.lineColor = "#D8E63C";
+                graph.lineThickness = 2;
+                graph.customBullet = "/static/img/images/star.gif"; // bullet for all data points
+                graph.bulletSize = 6; // bullet image should be a rectangle (width = height)
+                graph.customBulletField = "customBullet"; // this will make the graph to display custom bullet (red star)
+        
+                chart4.addGraph(graph);
+        
+                // value
+                valueAxis2 = new AmCharts.ValueAxis();
+                valueAxis2.dashLength = 2;
+                valueAxis2.axisAlpha = 0;
+                chart4.addValueAxis(valueAxis2);
+                // GRAPH2
+                graph2 = new AmCharts.AmGraph();
+                graph2.type = "smoothedLine";
+                graph2.valueField = "value2";
+                graph2.lineColor = "#00E63C";
+                graph2.lineThickness = 2;
+                graph2.customBullet = "/static/img/images/star.gif"; // bullet for all data points
+                graph2.bulletSize = 6; // bullet image should be a rectangle (width = height)
+                graph2.customBulletField = "customBullet"; // this will make the graph to display custom bullet (red star)
+
+                chart4.addGraph(graph2);
+                
+                
+                // value
+                valueAxis3 = new AmCharts.ValueAxis();
+                valueAxis3.dashLength = 2;
+                valueAxis3.axisAlpha = 0;
+                chart4.addValueAxis(valueAxis3);
+                // GRAPH3
+                graph3 = new AmCharts.AmGraph();
+                graph3.type = "smoothedLine";
+                graph3.valueField = "value3";
+                graph3.lineColor = "#E6003C";
+                graph3.lineThickness = 2;
+                graph3.customBullet = "/static/img/images/star.gif"; // bullet for all data points
+                graph3.bulletSize = 6; // bullet image should be a rectangle (width = height)
+                graph3.customBulletField = "customBullet"; // this will make the graph to display custom bullet (red star)
+
+                chart4.addGraph(graph3);
+
+
+                // CURSOR
+                chartCursor = new AmCharts.ChartCursor();
+                chart4.addChartCursor(chartCursor);
+                
+                chart4.write("chartdiv4");
+            };
+			 function reloadData(){
+				 getData();
+				 chart4.dataProvider = lineChartData;  
+			     chart4.validateNow();  
+			     chart4.validateData();  
+			 };
+			 window.setInterval("reloadData()", 50000);//五十秒刷新  
+        </script>
+<div id="chartdiv4" class="chart_div"></div>

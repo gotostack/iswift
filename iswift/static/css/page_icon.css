@@ -1,0 +1,167 @@
+.page_icon {
+    width: 16px;
+    height: 16px;
+    /*background-image: url("/static/img/web_sprites.png");
+    background-repeat: no-repeat;*/
+}
+.page_icon_breadcrumb {
+    /*background-position: left -758px;*/
+    width: 7px;
+    height: 11px;
+    background: url("/static/img/fatcow/32_32/bullet_code.png") no-repeat;
+    background-position: -24px -20px;
+}
+
+.page_icon_sort-downtick-on {
+    /*background-position: left -8299px;*/
+    background: url("/static/img/fatcow/16_16/bullet_arrow_down.png") no-repeat;
+}
+.page_icon_trsp {filter:alpha(opacity=30);-moz-opacity:0.30;opacity:3.80;}
+.page_icon_size16{width: 16px;height: 16px;}
+.page_icon_size20{width: 20px;height: 20px;}
+/*userdashboard left*/
+.page_icon_companyfiledb_20 {
+    /*background-position: left -7846px;*/
+    background: url("/static/img/fatcow/32_32/database_server.png") no-repeat;background-size: 100% 100%;
+}
+.page_icon_privatefiles_20 {
+    /*background-position: left -3958px;*/
+    background: url("/static/img/fatcow/32_32/folder_user.png") no-repeat;background-size: 100% 100%;
+}
+.page_icon_usershare_20 {
+    /*background-position: left -2045px;*/
+    background: url("/static/img/fatcow/32_32/share.png")  no-repeat;background-size:100% 100%;
+}
+.page_icon_recycle_20 {
+    /*background-position: left -8252px;*/
+    background: url("/static/img/fatcow/32_32/bin_recycle.png")  no-repeat;background-size:100% 100%;
+}
+.page_icon_version_20 {
+    /*background-position: left -835px;*/
+    background: url("/static/img/fatcow/32_32/three_tags.png") no-repeat;background-size: 100% 100%;
+}
+/*company dashboard left*/
+.page_icon_usage_20 {
+    background: url("/static/img/fatcow/32_32/chart_pie.png") no-repeat;background-size:100% 100%;
+}
+.page_icon_visitsnum_20 {
+    background: url("/static/img/fatcow/32_32/table_sum.png") no-repeat;background-size:100% 100%;
+}
+.page_icon_loginsum_20 {
+    background: url("/static/img/fatcow/32_32/traffic_usage.png") no-repeat;background-size:100% 100%;
+}
+.page_icon_publicfolder_20 {
+    background: url("/static/img/fatcow/32_32/folder_database.png") no-repeat;background-size:100% 100%;
+}
+.page_icon_publicfile_20 {
+    background: url("/static/img/fatcow/32_32/page_white_stack.png") no-repeat;background-size:100% 100%;
+}
+.page_icon_allocate_20 {
+    background: url("/static/img/fatcow/32_32/database_table.png") no-repeat;background-size:100% 100%;
+}
+.page_icon_spaceadmin_20 {
+    background: url("/static/img/fatcow/32_32/cog.png") no-repeat;background-size:100% 100%;
+}
+.page_icon_orgs_20 {
+    background: url("/static/img/fatcow/32_32/chart_organisation.png") no-repeat;background-size:100% 100%;
+}
+.page_icon_rights_20 {
+    background: url("/static/img/fatcow/32_32/report_user.png") no-repeat;background-size:100% 100%;
+}
+.page_icon_spaceapply_20 {
+    background: url("/static/img/fatcow/32_32/database_add.png") no-repeat;background-size:100% 100%;
+}
+.page_icon_versionapply_20 {
+    background: url("/static/img/fatcow/32_32/cpanel.png") no-repeat;background-size:100% 100%;
+}
+
+
+/*company administrator dashboard right*/
+.page_icon_administorator_20 {
+    background: url("/static/img/fatcow/32_32/user.png") no-repeat;background-size:100% 100%;
+}
+.page_icon_normaluser_20 {
+    background: url("/static/img/fatcow/32_32/user.png") no-repeat;background-size:100% 100%;
+}
+.page_icon_guests_20 {
+    background: url("/static/img/fatcow/32_32/user.png") no-repeat;background-size:100% 100%;
+}
+.page_icon_badusers_20 {
+    background: url("/static/img/fatcow/32_32/user.png") no-repeat;background-size:100% 100%;
+}
+/*super administrator dashboard left*/
+.page_icon_superadmin_20 {
+    background: url("/static/img/fatcow/32_32/diagramm.png") no-repeat;background-size:100% 100%;
+}
+.page_icon_spaces_20 {
+    background: url("/static/img/fatcow/32_32/database_gear.png") no-repeat;background-size:100% 100%;
+}
+.page_icon_suptenants_20 {
+    background: url("/static/img/fatcow/32_32/group_gear.png") no-repeat;background-size:100% 100%;
+}
+.page_icon_storagenode_20 {
+    background: url("/static/img/fatcow/32_32/computer.png") no-repeat;background-size:100% 100%;
+}
+.page_icon_belance_20 {
+    background: url("/static/img/fatcow/32_32/dns_setting.png") no-repeat;background-size:100% 100%;
+}
+/*super administrator dashboard right*/
+.page_icon_superspaceadmin_20 {
+    background: url("/static/img/fatcow/32_32/world.png") no-repeat;background-size:100% 100%;
+}
+
+.page_icon_folder_add {
+    background-repeat: no-repeat;
+    background-image: url("/static/img/fatcow/16_16/folder_add.png");
+    /*background-image: url("/static/bootstrap/img/glyphicons-halflings.png");
+    background-position: -381px -120px;
+    background-position: left -2344px;*/
+}
+.page_icon_upload_16 {
+    background-repeat: no-repeat;
+    background-image: url("/static/img/fatcow/16_16/inbox_upload.png");
+    /*background-image: url("/static/bootstrap/img/glyphicons-halflings.png");
+    background-position: -289px -96px;
+    background-position: left -9137px;*/
+}
+.page_icon_rainbow_16 {
+    background-repeat: no-repeat;
+    background-image: url("/static/img/famfamfam/world_link.png");
+    /*background-image: url("/static/bootstrap/img/glyphicons-halflings.png");
+    background-position: -94px -144px;
+    background-position: left -7829px;*/
+}
+.page_icon_show-deleted {
+    background-repeat: no-repeat;
+    background-image: url("/static/img/famfamfam/star.png");
+    /*background-image: url("/static/bootstrap/img/glyphicons-halflings.png");
+    background-position: -453px 0;
+    background-position: left -8255px;*/
+}
+.page_icon_link18 {
+    width: 18px;
+    height: 18px;
+    background-repeat: no-repeat;
+    background-image: url("/static/img/famfamfam/monitor_link.png");
+    /*background-image: url("/static/bootstrap/img/glyphicons-halflings.png");
+    background-position: -334px -122px;
+    background-position: left -3939px;*/
+}
+
+.page_icon_folder_32 {
+    /*background-position: left -2311px;*/
+    width: 32px;
+    height: 32px;
+    background-repeat: no-repeat;
+    background-image: url("/static/img/fatcow/32_32/folder_blue.png");
+}
+.page_icon_page_white_word_32 {
+    background-position: left -7404px;
+    width: 32px;
+    height: 32px;
+}
+.page_icon_page_white_code_32 {
+    background-position: left -5162px;
+    width: 32px;
+    height: 32px;
+}

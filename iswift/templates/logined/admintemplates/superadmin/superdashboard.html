@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}iSwift-超级管理员-Hardware{% endblock %}
+{% block headinfo %}欢迎,<a><b>{{ username }}</b></a>. | <a href="/logout">退出</a>{% endblock %}
+{% block content %}
+    {% block leftmenu %}
+    {% include "logined/admintemplates/superadmin/super_left_menu.html" %}
+    {% endblock %}
+    {% block maininfo %}
+	<div id="right_disply">
+    {% include "logined/admintemplates/superadmin/super_right_display.html" %}
+    </div>
+    {% endblock %}
+{% endblock %}

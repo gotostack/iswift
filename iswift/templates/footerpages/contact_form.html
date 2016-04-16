@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}contact us{% endblock %}
+{% block headinfo %}联系我们{% endblock %}
+{% block content %}
+<div class="page-header">
+               <h1>联系我们<small>Contact Us</small></h1>
+</div>
+<div class="container-fluid">
+	    <div class="row">
+		    <div class="col-md-2">
+		    		<ul class="nav nav-list navbar well well-sm">
+		                    <li><h4>分类<i class="icon-sitemap"></i></h4></li>
+		                    
+		                    <hr>
+		                    
+		                    <li><h5>关于DocPocket</h5></li>
+		                    <li><a href=""><i class="icon-chevron-right"></i>使用</a></li>
+		                    <li><a href=""><i class="icon-chevron-right"></i>空间服务</a></li>
+		                    <li><a href=""><i class="icon-chevron-right"></i>了解详情</a></li>
+		                    <li><a href=""><i class="icon-chevron-right"></i>联系我们</a></li>
+		                    
+		                	<hr>
+		                	
+			                <li><h5>用户使用手册</h5></li>
+			                <li><a href=""><i class="icon-chevron-right"></i>注册</a></li>
+			                <li><a href=""><i class="icon-chevron-right"></i>登录</a></li>
+			                <li><a href=""><i class="icon-chevron-right"></i>文件管理</a></li>
+			                <li><a href=""><i class="icon-chevron-right"></i>版本管理</a></li>
+			                
+			                <hr>
+		                	
+			                <li><h5>企业使用手册</h5></li>
+			                <li><a href=""><i class="icon-chevron-right"></i>注册</a></li>
+			                <li><a href=""><i class="icon-chevron-right"></i>登录</a></li>
+			                <li><a href=""><i class="icon-chevron-right"></i>空间管理</a></li>
+			                <li><a href=""><i class="icon-chevron-right"></i>企业管理</a></li>
+			                <li><a href=""><i class="icon-chevron-right"></i>组织机构	</a></li>
+			                
+		          </ul>
+		    </div>
+		     <div class="col-md-9" role="main">
+						    <div class="panel panel-danger">
+						        <div class="panel-heading">
+						          <h3 class="panel-title">留言表单</h3>
+						        </div>
+						        <div class="panel-body">
+									          <form action="" method="post">
+											<fieldset>
+														
+											    {% include "_messages.html" %}
+													    {% if form.errors %}
+													        <p style="color: red;">
+													            Please correct the error{{ form.errors|pluralize }} below.
+													        </p>
+													    {% endif %}
+														<div class="input-group input_margin"><label class="input-group-addon">姓名：</label><input id="id_subject" type="text" name="subject" maxlength="100" class="form-control"  style=" width:350px;" ></div><div class="pull-right">{{ form.subject.errors }}</div>
+														<div class="input-group input_margin"><label class="input-group-addon">email：</label><input type="text" name="email" id="id_email" class="form-control"  style=" width:350px;" ></div><div class="pull-right">{{ form.email.errors }}</div>
+														<div class="input-group input_margin"> <label class="input-group-addon">消息：</label><textarea id="id_message" rows="10" cols="40" name="message" class="form-control"  style=" width:350px;" ></textarea></div><div class="pull-right">{{ form.message.errors }}</div>
+														<div class="input-group input_margin"><label class="input-group-addon">验证码：</label><input id="id_VerifyCode" type="text" name="VerifyCode" maxlength="4"  class="form-control"  style=" width:350px;" ></div><div class="pull-right">{{ form.VerifyCode.errors }}</div>
+														<div class="vefcode panel-footer"><img onclick="this.setAttribute('src','/VerifyCode/?nocache='+Math.random());" style="height:58px;height:30px;margin: 0px 6px;" src="/VerifyCode/" alt="CheckCode"/>区分大小写</div>
+											</fieldset>
+											<div class="modal-footer"><input type="submit" class="btn btn-primary" value="提交"> <input type="reset" class="btn" value="清除"></div>
+											</form>
+						        </div>
+				      		</div>		
+		    </div>
+	    </div>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}iSwift-超级管理员-Nodes Balance{% endblock %}
+{% block headinfo %}欢迎,<b>{{ username }}</b>. | <a href="/logout">退出</a>{% endblock %}
+{% block content %}
+    {% block leftmenu %}
+    {% include "logined/admintemplates/superadmin/super_left_menu.html" %}
+    {% endblock %}
+    {% block maininfo %}
+<div id="right_disply">
+	<div class="panel panel-info">
+		<div class="panel-heading">
+		          <h3 class="panel-title">负载均衡</h3>
+		</div>
+		<div class="modal-body clearfix">
+			{% include "logined/admintemplates/charts/chartstyle3.html" %}
+		</div>
+	</div>
+	<div class="panel panel-info">
+		<div class="panel-heading">
+		          <h3 class="panel-title">请求分布</h3>
+		</div>
+		<div class="modal-body clearfix">
+			{% include "logined/admintemplates/charts/chartstyle2.html" %}
+		</div>
+	</div>
+</div>
+    {% endblock %}
+{% endblock %}

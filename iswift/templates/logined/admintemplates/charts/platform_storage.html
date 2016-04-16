@@ -1,0 +1,66 @@
+<script type="text/javascript">
+$(function () {
+        AmCharts.ready(function () {
+                getData();
+                createChart();
+            });
+        reloadData();
+});
+var chartData_pie = [{
+     country: "已经使用",
+     value: 0
+ }, {
+     country: "可用空间",
+     value: 0
+ }];
+var chartstorage;
+var list = [];
+function getData(){
+    $.ajax({  
+        type: "GET",  
+        url: "/mng/d/data/cmpspaces/",  
+        success: function(msg){
+        //这里认为msg为json对象  
+        //需要将json对象转换成类似上面的chartData变量的数组  
+         list = eval(msg);
+         chartData_pie = list;
+    }  
+ });  
+};
+function setData(){chartstorage.dataProvider =chartData_pie;};
+function createChart(){
+                // PIE CHART
+                chartstorage = new AmCharts.AmPieChart();
+                //getData();
+                //chartstorage.dataProvider = chartData_pie;
+                setData();
+                chartstorage.titleField = "country";
+                chartstorage.valueField = "value";
+                chartstorage.outlineColor = "#FFFFFF";
+                chartstorage.outlineAlpha = 1;
+                chartstorage.outlineThickness = 2;
+                chartstorage.marginBottom=  0;
+                chartstorage.marginLeft  =  0;
+                chartstorage.marginRight =  0;
+                chartstorage.marginTop   =  0;
+                chartstorage.minRadius   =  0;
+                chartstorage.pieX = 300;
+                chartstorage.pieY = 100;
+                chartstorage.height = 230;
+                chartstorage.startRadius=100;
+                // this makes the chart 3D
+                chartstorage.depth3D = 15;
+                chartstorage.angle = 30;
+                //chartstorage.addTitle("--单位：GB (1TB=1024GB,1GB=1024MB,1MB=1024KB,1KB=1024Bytes)", 12);  
+                // WRITE
+                chartstorage.write("pie_div");
+            };
+            function reloadData(){
+                getData();
+                chartstorage.dataProvider = chartData_pie;  
+                chartstorage.validateNow();  
+                chartstorage.validateData();  
+            };
+            window.setInterval("reloadData()", 5000);//半小时刷新一次  
+        </script>
+<div id="pie_div" class="chart_div"></div>

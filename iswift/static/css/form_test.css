@@ -1,0 +1,45 @@
+.onShow
+{
+    background:url(/static/img/famfamfam/comments.png) no-repeat; 
+    padding:0 25px 0 25px; 
+    float:right;
+    font-size: 12px;
+    vertical-align:middle;
+    display:block;
+}
+.onFocus
+{
+    background:url(/static/img/famfamfam/error.png) no-repeat; 
+    padding:0 25px 0 25px; 
+    float:right;
+    font-size: 12px;
+    vertical-align:middle;
+    display:block;
+}
+.onError
+{
+    background:url(/static/img/famfamfam/exclamation.png) no-repeat; 
+    padding:0 25px 0 25px; 
+    float:right;
+    font-size: 12px;
+    vertical-align:middle;
+    display:block;
+}
+.onCorrect
+{
+    background:url(/static/img/famfamfam/accept.png) no-repeat; 
+    padding:0 25px 0 25px; 
+    float:right;
+    font-size: 12px;
+    vertical-align:middle;
+    display:block;
+}
+.onLoad
+{
+    background:url(/static/img/famfamfam/comments.png) no-repeat; 
+    padding:0 25px 0 25px; 
+    float:right;
+    font-size: 12px;
+    vertical-align:middle;
+    display:block;
+} 

@@ -1,0 +1,135 @@
+        <script type="text/javascript">
+            var chart3;
+
+            var chartData3 = [];
+
+            AmCharts.ready(function () {
+                // generate some random data first   
+                generateChartData();
+
+                // SERIAL chart3
+                chart3 = new AmCharts.AmSerialChart();
+                chart3.pathToImages = "/static/img/amcharts/images/";
+                chart3.marginLeft = 0;
+                chart3.marginRight = 0;
+                chart3.marginTop = 0;
+                chart3.dataProvider = chartData3;
+                chart3.categoryField = "date";
+
+                // AXES
+                // category
+                var categoryAxis = chart3.categoryAxis;
+                categoryAxis.parseDates = true; // as our data is date-based, we set parseDates to true
+                categoryAxis.minPeriod = "DD"; // our data is daily, so we set minPeriod to DD
+                // value axis
+                var valueAxis = new AmCharts.ValueAxis();
+                valueAxis.inside = true;
+                valueAxis.tickLength = 0;
+                valueAxis.axisAlpha = 0;
+                valueAxis.minimum = 100;
+                valueAxis.maximum = 140;
+                chart3.addValueAxis(valueAxis);
+
+                // GRAPH
+                var graph = new AmCharts.AmGraph();
+                graph.dashLength = 3;
+                graph.lineColor = "#7717D7";
+                graph.valueField = "visits";
+                graph.dashLength = 3;
+                graph.bullet = "round";
+                chart3.addGraph(graph);
+
+                // CURSOR
+                var chartCursor = new AmCharts.ChartCursor();
+                chartCursor.cursorAlpha = 0;
+                chart3.addChartCursor(chartCursor);
+
+                // GUIDES are used to create horizontal range fills
+                var guide = new AmCharts.Guide();
+                guide.value = 0;
+                guide.toValue = 105;
+                guide.fillColor = "#CC0000";
+                guide.fillAlpha = 0.2;
+                guide.lineAlpha = 0;
+                valueAxis.addGuide(guide);
+
+                var guide = new AmCharts.Guide();
+                guide.value = 105;
+                guide.toValue = 110;
+                guide.fillColor = "#CC0000";
+                guide.fillAlpha = 0.15;
+                guide.lineAlpha = 0;
+                valueAxis.addGuide(guide);
+
+                var guide = new AmCharts.Guide();
+                guide.value = 110;
+                guide.toValue = 115;
+                guide.fillColor = "#CC0000";
+                guide.fillAlpha = 0.1;
+                guide.lineAlpha = 0;
+                valueAxis.addGuide(guide);
+
+                var guide = new AmCharts.Guide();
+                guide.value = 115;
+                guide.toValue = 120;
+                guide.fillColor = "#CC0000";
+                guide.fillAlpha = 0.05;
+                guide.lineAlpha = 0;
+                valueAxis.addGuide(guide);
+
+                var guide = new AmCharts.Guide();
+                guide.value = 120;
+                guide.toValue = 125;
+                guide.fillColor = "#0000cc";
+                guide.fillAlpha = 0.05;
+                guide.lineAlpha = 0;
+                valueAxis.addGuide(guide);
+
+                var guide = new AmCharts.Guide();
+                guide.value = 125;
+                guide.toValue = 130;
+                guide.fillColor = "#0000cc";
+                guide.fillAlpha = 0.1;
+                guide.lineAlpha = 0;
+                valueAxis.addGuide(guide);
+
+                var guide = new AmCharts.Guide();
+                guide.value = 130;
+                guide.toValue = 135;
+                guide.fillColor = "#0000cc";
+                guide.fillAlpha = 0.15;
+                guide.lineAlpha = 0;
+                valueAxis.addGuide(guide);
+
+                var guide = new AmCharts.Guide();
+                guide.value = 135;
+                guide.toValue = 140;
+                guide.fillColor = "#0000cc";
+                guide.fillAlpha = 0.2;
+                guide.lineAlpha = 0;
+                valueAxis.addGuide(guide);
+
+                // WRITE
+                chart3.write("chartdiv3");
+            });
+
+            // generate some random data
+            function generateChartData() {
+                var firstDate = new Date();
+                firstDate.setDate(firstDate.getDate() - 10);
+
+                for (var i = 0; i < 10; i++) {
+                    var newDate = new Date(firstDate);
+                    newDate.setDate(newDate.getDate() + i);
+
+                    var visits = Math.round(Math.random() * 40) + 100;
+
+                    chartData3.push({
+                        date: newDate,
+                        visits: visits
+                    });
+                }
+            }
+        </script>
+
+        <div id="chartdiv3" class="chart_div"></div>

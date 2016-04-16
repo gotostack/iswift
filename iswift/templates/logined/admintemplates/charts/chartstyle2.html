@@ -1,0 +1,129 @@
+<script type="text/javascript">
+            var chart2;
+
+            var chartData2 = [{
+                time: 5,
+                proxy01: 1,
+                proxy02: 5,
+                proxy03: 3
+            }, {
+                time: 6,
+                proxy01: 1,
+                proxy02: 2,
+                proxy03: 6
+            }, {
+                time: 7,
+                proxy01: 2,
+                proxy02: 3,
+                proxy03: 1
+            }, {
+                time: 8,
+                proxy01: 3,
+                proxy02: 4,
+                proxy03: 1
+            }, {
+                time: 9,
+                proxy01: 5,
+                proxy02: 1,
+                proxy03: 2
+            }, {
+                time: 10,
+                proxy01: 3,
+                proxy02: 2,
+                proxy03: 1
+            }, {
+                time: 11,
+                proxy01: 1,
+                proxy02: 2,
+                proxy03: 3
+            }, {
+                time: 12,
+                proxy01: 2,
+                proxy02: 1,
+                proxy03: 5
+            }, {
+                time: 13,
+                proxy01: 3,
+                proxy02: 5,
+                proxy03: 2
+            }, {
+                time: 14,
+                proxy01: 4,
+                proxy02: 3,
+                proxy03: 6
+            }, {
+                time: 16,
+                proxy01: 1,
+                proxy02: 2,
+                proxy03: 4
+            }];
+
+
+            AmCharts.ready(function () {
+                // SERIAL chart2
+                chart2 = new AmCharts.AmSerialChart();
+                chart2.dataProvider = chartData2;
+                chart2.categoryField = "time";
+                chart2.startDuration = 0.5;
+                chart2.balloon.color = "#000000";
+
+                // AXES
+                // category
+                var categoryAxis2 = chart2.categoryAxis;
+                categoryAxis2.fillAlpha = 1;
+                categoryAxis2.fillColor = "#FAFAFA";
+                categoryAxis2.gridAlpha = 0;
+                categoryAxis2.axisAlpha = 0;
+                categoryAxis2.gridPosition = "start";
+                categoryAxis2.position = "top";
+
+                // value
+                var valueAxis2 = new AmCharts.ValueAxis();
+                valueAxis2.title = "请求量";
+                valueAxis2.dashLength = 5;
+                valueAxis2.axisAlpha = 0;
+                valueAxis2.minimum = 1;
+                valueAxis2.maximum = 6;
+                valueAxis2.integersOnly = true;
+                valueAxis2.gridCount = 10;
+                valueAxis2.reversed = true; // this line makes the value axis reversed
+                chart2.addValueAxis(valueAxis2);
+
+                // GRAPHS
+                // Italy graph                                          
+                var graph2_1 = new AmCharts.AmGraph();
+                graph2_1.title = "proxy-server-01";
+                graph2_1.valueField = "proxy01";
+                //graph2_1.hidden = true; // this line makes the graph initially hidden           
+                graph2_1.balloonText = "proxy-server-01在[[category]]点的请求数量:[[value]]";
+                graph2_1.lineAlpha = 1;
+                graph2_1.bullet = "round";
+                chart2.addGraph(graph2_1);
+
+                // Germany graph
+                var graph2_2 = new AmCharts.AmGraph();
+                graph2_2.title = "proxy-server-02";
+                graph2_2.valueField = "proxy02";
+                graph2_2.balloonText = "proxy-server-02在[[category]]点的请求数量:[[value]]";
+                graph2_2.bullet = "round";
+                chart2.addGraph(graph2_2);
+
+                // United Kingdom graph
+                var graph2_3 = new AmCharts.AmGraph();
+                graph2_3.title = "proxy-server-03";
+                graph2_3.valueField = "proxy03";
+                graph2_3.balloonText = "proxy-server-03在[[category]]点的请求数量:[[value]]";
+                graph2_3.bullet = "round";
+                chart2.addGraph(graph2_3);
+
+                // LEGEND
+                var legend2 = new AmCharts.AmLegend();
+                legend2.markerType = "circle";
+                chart2.addLegend(legend2);
+
+                // WRITE
+                chart2.write("chartdiv2");
+            });
+        </script>
+
+        <div id="chartdiv2" class="chart_div"></div>

@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+{% block title %}iSwift-用户文件管理{% endblock %}
+{% block headinfo %}
+欢迎,<div class="btn-group">
+    <a class="btn btn-link" data-toggle="dropdown" href="#">
+    {{ username }}
+    <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dLabel">
+    <li role="presentation">
+        <div style="text-align:left">空间使用率：60%</div>  
+	    <div class="progress">
+		  <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
+		    <span class="sr-only">60% used</span>
+		  </div>
+		</div>
+    </li>
+    <li class="divider" role="presentation"></li>
+    <li role="presentation">
+        <a href="/logout" class="btn btn-info">退出平台</a>
+    </li>
+    </ul>
+    </div>
+{% endblock %}
+{% block content %}
+<div id="message_alert_bar">
+{% include "_messages.html" %}
+</div>
+    {% block leftmenu %}
+    {% include "logined/userpanel/left_menu.html" %}
+    {% endblock %}
+    {% block maininfo %}
+    {% include "logined/userpanel/right_display.html" %}
+    {% endblock %}
+    
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><img src='/static/img/famfamfam/cancel.png'></button>
+            <h4 class="modal-title" id="myModalLabel">上传文件</h4>
+          </div>
+          <form action="/userdashboard/file/create/{% if file_loaction %}{% for paths  in file_loaction %}{{ paths.name }}/{%endfor%}{%endif%}" enctype="multipart/form-data" method="post" id="b_form_test">{% csrf_token %}
+<div class="modal-body">
+<fieldset id="id_fieldset1">
+<!--
+    <input maxlength="255" name="id_name" id="id_name" type="text">
+    <input value="UploadObject" name="method" id="id_method" type="hidden">
+    <input value="TEST1" name="container_name" id="id_container_name" type="hidden">
+-->
+<input name="id_object_file" id="id_object_file" type="file">
+<input name="id_file_md5" id="id_file_md5"  type="hidden">
+<input name="id_file_sha1" id="id_file_sha1"  type="hidden">
+</fieldset>
+<div id="cfile_info" >
+    <div class="progress progress-striped">
+        <div id="file_progress" class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" ></div>
+    </div>
+</div>
+
+</div>
+<script src="/static/js/spark-md5.js" type="text/javascript"></script>
+<script src="/static/js/file_sha1.js" type="text/javascript"></script>
+<script type="text/javascript">
+function CustomerCreateFile()
+{
+    var cfileform = document.getElementById("b_form_test");
+    var file_md5 = document.getElementById("id_file_md5");
+    var file_sha1 = document.getElementById("id_file_sha1");
+    var file_progress = document.getElementById("file_progress");
+    
+    var hasError = false;
+    
+    var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice;
+    var log = document.getElementById("cfile_info");
+    var input = document.getElementById("id_object_file");
+    var running = false;
+    
+    if (input.files.length == 0) {
+        registerLog("<strong>Please select a file.</strong><br/>");
+        return;
+    }
+
+    
+    function registerLog(str, className) {
+        var elem = document.createElement("div");
+        elem.innerHTML = str;
+        elem.className = "alert alert-"+className;
+        log.appendChild(elem);
+    }
+    
+    if (!("FileReader" in window) || !("File" in window) || !blobSlice) {
+        registerLog("<p><strong>Your browser does not support the FileAPI or slicing of files.</strong></p>", "error");
+        hasError = true;
+    }
+    else {
+        var ua = navigator.userAgent.toLowerCase();
+
+        if (/chrome/.test(ua)) {
+            if (location.protocol === "file:") {
+                registerLog("<p><strong>This example will only work in chrome (in file:// protocol) if you start it up with -allow-file-access-from-files argument.</strong><br/>This is a security measure introduced in chrome, please <a target=\"_blank\" href=\"http://code.google.com/p/chromium/issues/detail?id=60889\">see</a>.</p>");
+            }
+        }
+        else if (/firefox/.test(ua)) {
+            var firebugEnabled = !!(window.console && (window.console.firebug || (console.exception && console.table)));
+            if (firebugEnabled) registerLog("<p><strong>It seems you got firebug enabled.</strong><br/>Firebug slows down this script by a great margin and causes high memory/cpu usage, please disable it and use the built in web console instead.</p>");
+        }
+        else if (/opera/.test(ua)) {
+            registerLog("<p><strong>If you got DragonFly open please consider closing it as it slows down the test by a great margin.</strong></p>");
+        }
+        function doIncrementalTest() {
+            if (running) return;
+            var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice,
+                file = input.files[0],
+                chunkSize = 2097152,                           // read in chunks of 2MB
+                chunks = Math.ceil(file.size / chunkSize),
+                currentChunk = 0,
+                spark = new SparkMD5.ArrayBuffer(),
+                time,
+                uniqueId = "chunk_" + (new Date().getTime()),
+                chunkId = null,
+
+            frOnload = function(e) {
+
+                if (currentChunk == 0) {
+                	registerLog("Read chunk number <strong id=\"" + uniqueId + "\">" + (currentChunk + 1) + "</strong> of <strong>" + chunks + "</strong><br/>", "info");
+                }
+                else {
+                    if (chunkId === null) chunkId = document.getElementById(uniqueId);
+                    chunkId.innerHTML = currentChunk + 1
+                    file_progress.style.width=parseInt(((currentChunk + 1)/chunks)*100)+"%";
+                    file_progress.innerHTML=parseInt(((currentChunk + 1)/chunks)*100)+"%";
+                }
+
+                spark.append(e.target.result);                 // append array buffer
+                currentChunk += 1;
+
+                if (currentChunk < chunks) {
+                    loadNext();
+                }
+                else {
+                    running = false;
+                    registerLog("<strong>Finished loading!</strong><br/>", "success");
+                    //registerLog("<strong>Computed hash:</strong> " + spark.end() + "<br/>", "success"); // compute hash
+                    file_md5.setAttribute('value',spark.end());
+                    //var hash = CryptoJS.SHA1("Message");
+                    //file_sha1.setAttribute('value',hash);
+                    registerLog("<strong>Total time:</strong> " + (new Date().getTime() - time) + "ms<br/>", "success");
+                    cfileform.submit();
+                }
+            },
+
+           frOnerror = function() {
+                running = false;
+                registerLog("<strong>Oops, something went wrong.</strong>", "error");
+                hasError = true;
+           },
+
+            loadNext = function() {
+                var fileReader = new FileReader();
+                fileReader.onload = frOnload;
+                fileReader.onerror = frOnerror;
+
+                var start = currentChunk * chunkSize,
+                    end = ((start + chunkSize) >= file.size) ? file.size : start + chunkSize;
+
+                fileReader.readAsArrayBuffer(blobSlice.call(file, start, end));
+            };
+
+            running = true;
+            registerLog("<p></p><strong>正在计算文件(" + file.name + ")的摘要。</strong><br/>", "info");
+            time = new Date().getTime();
+            loadNext();
+        }
+
+        function clearLog() {
+            log.getChildren().destroy();
+        }
+        
+    }
+    doIncrementalTest()
+}
+</script>
+
+</form>
+          <div class="modal-footer">
+			<input data-loading-text="Loading..." class="btn btn-primary" value="提交" type="button" onClick="CustomerCreateFile()">
+			<button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+		  </div>
+
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+</div>
+
+
+
+<script type="text/html" id="create_file_li">
+<div class="filename-col"><img src="/static/img/icon_spacer.gif" class="page_icon icon page_icon_folder_32" height="20px" width="26px"><form action="/userdashboard/folder/create/{% if file_loaction %}{% for paths  in file_loaction %}{{ paths.name }}/{%endfor%}{%endif%}" method="post" id="form_newfolder">{% csrf_token %}<div class="file_form_div"><div class="div_name"><input autofocus="autofocus" value="新建文件夹" onfocus="if(this.value=='新建文件夹'){this.value=''}" onblur="if(this.value==''){this.value='新建文件夹'}" maxlength="255" name="id_name" id="id_name" type="text"></div><div class="div_btn"><div class="div_cancle_btn"><input value="取消" id="folder_create_cancle" class="btn btn-small btn-primary" type="button"></div><div class="div_create_btn"><input class="btn btn-small btn-primary" value="创建" type="submit"></div></div></div></form></div>
+</script>
+{% endblock %}

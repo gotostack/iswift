@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}iSwift-用户文件管理{% endblock %}
+{% block headinfo %}
+欢迎,<div class="btn-group">
+    <a class="btn btn-link" data-toggle="dropdown" href="#">
+    {{ username }}
+    <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dLabel">
+    <li role="presentation">
+        <div style="text-align:left">空间使用率：60%</div>  
+	    <div class="progress">
+	       <div class="bar" style="width: 60%;"></div>
+	    </div>
+    </li>
+    <li class="divider" role="presentation"></li>
+    <li role="presentation">
+        <a href="/logout">退出平台</a>
+    </li>
+    </ul>
+    </div>
+{% endblock %}
+{% block content %}
+<div id="message_alert_bar">
+{% include "_messages.html" %}
+</div>
+    {% block leftmenu %}
+    {% include "logined/privatefiles/left_menu.html" %}
+    {% endblock %}
+    {% block maininfo %}
+    {% include "logined/privatefiles/right_display.html" %}
+    {% endblock %}
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><img src='/static/img/famfamfam/cancel.png'></button>
+<h3 id="myModalLabel">上传文件</h3>
+</div>
+<form action="/privatefiles/file/create/{% if file_loaction %}{% for paths  in file_loaction %}{{ paths.name }}/{%endfor%}{%endif%}" enctype="multipart/form-data" method="post" id="b_form_test">
+<div class="modal-body">
+<div id="txtdiv1">
+    <input value="$csrf_token" name="csrfmiddlewaretoken" id="csrf_token" type="hidden">
+</div>
+<fieldset id="id_fieldset1">
+<!--
+    <input maxlength="255" name="id_name" id="id_name" type="text">
+    <input value="UploadObject" name="method" id="id_method" type="hidden">
+    <input value="TEST1" name="container_name" id="id_container_name" type="hidden">
+-->
+<input name="id_object_file" id="id_object_file" type="file">
+</fieldset>
+</div>
+<div class="modal-footer">
+<input data-loading-text="Loading..." class="btn btn-primary" value="提交" type="submit">
+<button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+</div>
+</form>
+</div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+</div>
+
+{% endblock %}

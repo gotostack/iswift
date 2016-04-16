@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}iSwift-企业租户-空间管理{% endblock %}
+{% block headinfo %}欢迎,<b>{{ username }}</b>. | <a href="/logout">退出</a>{% endblock %}
+{% block content %}
+    {% block leftmenu %}
+    {% include "logined/admintemplates/company/company_left_menu.html" %}
+    {% endblock %}
+    {% block maininfo %}
+<div id="right_disply">
+	<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3 class="panel-title"><img src="/static/img/fatcow/32_32/chart_curve.png">部门空间列表<small></small></h3>
+			</div>
+			<div id="file_sort" class="fileclear">
+	          <a id="name-sorter" class="file_sort_column_header bolded" style="cursor: pointer; ">
+	                        <span style="cursor: pointer; ">角色</span><img src="/static/img/icon_spacer.gif" style="line-height: 100%; cursor: pointer;" alt="" class="sprite page_icon page_icon_sort-downtick-on" border="0">
+	          </a>
+	          <a id="kind-sorter" class="file_sort_column_header noarrow" style="cursor: pointer; ">
+	            <span id="kind-sorter-label" style="cursor: pointer; ">级别</span>
+	          </a>
+	          <a id="modified-sorter" class="file_sort_column_header bolded" style="cursor: pointer; ">
+	            <span style="cursor: pointer; ">空间概况</span><img src="/static/img/icon_spacer.gif" style="line-height: 100%; cursor: pointer;" alt="" class="sprite page_icon page_icon_sort-downtick-on" border="0">
+	          </a>
+	        </div>
+	        <div id="file_detail">
+		        {% if companyusers %}
+		            <ol id="file_list_ui">
+		            {% for cmpuser  in companyusers %}
+			             <li class="browse-file"><div class="filename-col"><input type="radio"></input><img   class="page_icon  icon page_icon_administorator_20"   title="{{ cmpuser.name }}" draggable="true" src="/static/img/icon_spacer.gif "  height="20px" width="26px">
+			             <a href="{%if cmpuser.isFile%} get_file/download/{{cmpuser.name}}  {%else%} {{cmpuser.name}}/ {% endif %} " target="_self">{{ cmpuser.name }}</a></div>
+			             <div class="kind"><span class="category">{{ cmpuser.competence }}</span><span class="extension secondary"></span></div>
+			             <div class="modified"><span class="modified-time">{{ cmpuser.used_size }}/{{ cmpuser.storage_size }}(MB)</span></div><br class="clear"></li>
+		            {% endfor %}
+		            </ol> 
+		        {% endif %}
+		        <p>部门空间列表</p>
+	        </div>
+	</div>
+	<div class="panel panel-info">
+		<div class="panel-heading">
+		          <h3 class="panel-title"><img src="/static/img/fatcow/32_32/chart_curve.png"> 空间管理<small></small></h3>
+		</div>
+		{% if errors %}
+                <ul>
+                    {% for error in errors %}
+                    <li style="color: red;"><b>{{ error }}</b></li>
+                    {% endfor %}
+                </ul>
+         {% endif %}
+         <form id="register_form" action=""  method="post" >{% csrf_token %}
+                  <div class="modal-body clearfix">
+                    <div ><label for="id_username"><h3>企业租户管理员:</h3></label></div>
+                    <div class="input-group input_margin">
+                       <label style="font-size:15px;font-weight:600">申请版本级别:</label><select name="select" class="form-control" id="select">
+                                        <option value="0">请选择...</option>
+                                        <option value="1">10个版本，5个版本永久备份</option>
+                                        <option value="2">20个版本，10个版本永久备份</option>
+                                        <option value="3">50个版本，25个版本永久备份</option>
+                                        <option value="3">100个版本，50个版本永久备份</option>
+                                        <option value="4">无限制版本和备份数量，联系我们</option>
+                                      </select>
+                    </div>
+                    <div><label for="id_username"><h3>提供管理员口令:</h3></label></div>
+                       <div class="input-group input_margin"><label for="id_username" class="input-group-addon">公司管理员:</label><input type="text" class="form-control"  name="companyname" value="{{ companyname }}" class="form-control" style=" width:350px;" ></div>
+                       <div class="input-group input_margin"><label for="id_password" class="input-group-addon">密码:</label><input type="text" name="companysize" value="{{ companysize }}" class="form-control" style=" width:350px;" ></div>
+                    </div>
+                  <div class="modal-footer">
+                		<button type="submit" class="btn btn-primary"> 提 交 </button>
+                  </div>
+         </form>
+	</div>
+</div><!-- right display结束 -->
+    {% endblock %}
+{% endblock %}

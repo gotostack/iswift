@@ -1,0 +1,171 @@
+
+        <script type="text/javascript">
+            var chart1;
+
+            var chartData1 = [{
+                month: "7",
+                device01: 2.5,
+                device02: 2.5,
+                device03: 2.1,
+                device04: 0.3,
+                device05: 0.2,
+                device06: 0.1
+            }, {
+                month: "8",
+                device01: 2.6,
+                device02: 2.7,
+                device03: 2.2,
+                device04: 0.3,
+                device05: 0.3,
+                device06: 0.1
+            }, {
+                month: "9",
+                device01: 2.8,
+                device02: 2.9,
+                device03: 2.4,
+                device04: 0.3,
+                device05: 0.3,
+                device06: 0.1
+            }, {
+                month: "10",
+                device01: 2.8,
+                device02: 2.9,
+                device03: 2.4,
+                device04: 0.3,
+                device05: 0.3,
+                device06: 0.1
+            }, {
+                month: "11",
+                device01: 2.8,
+                device02: 2.9,
+                device03: 2.4,
+                device04: 0.3,
+                device05: 0.3,
+                device06: 0.1
+            }];
+
+            AmCharts.ready(function () {
+                // SERIAL chart1
+                chart1 = new AmCharts.AmSerialChart();
+                chart1.dataProvider = chartData1;
+                chart1.categoryField = "month";
+                chart1.plotAreaBorderAlpha = 0.2;
+
+                // AXES
+                // category
+                var categoryAxis1 = chart1.categoryAxis;
+                categoryAxis1.gridAlpha = 0.1;
+                categoryAxis1.axisAlpha = 0;
+                categoryAxis1.gridPosition = "start";
+
+                // value
+                var valueAxis1 = new AmCharts.ValueAxis();
+                valueAxis1.stackType = "regular";
+                valueAxis1.gridAlpha = 0.1;
+                valueAxis1.axisAlpha = 0;
+                chart1.addValueAxis(valueAxis1);
+
+                // GRAPHS
+                // first graph1_1    
+                var graph1_1 = new AmCharts.AmGraph();
+                graph1_1.title = "device01";
+                graph1_1.labelText = "设备使用率：[[value]]\%";
+                graph1_1.balloonText = "device01在[[category]]月的设备使用率:[[value]]\%";
+                graph1_1.valueField = "device01";
+                graph1_1.type = "column";
+                graph1_1.lineAlpha = 0;
+                graph1_1.fillAlphas = 1;
+                graph1_1.lineColor = "#C72C95";
+                chart1.addGraph(graph1_1);
+
+                // second graph1_1              
+                graph1_1 = new AmCharts.AmGraph();
+                graph1_1.title = "device02";
+                graph1_1.labelText = "设备使用率：[[value]]\%";
+                graph1_1.balloonText = "device02在[[category]]月的设备使用率:[[value]]\%";
+                graph1_1.valueField = "device02";
+                graph1_1.type = "column";
+                graph1_1.lineAlpha = 0;
+                graph1_1.fillAlphas = 1;
+                graph1_1.lineColor = "#D8E0BD";
+                chart1.addGraph(graph1_1);
+
+                // third graph1_1                              
+                graph1_1 = new AmCharts.AmGraph();
+                graph1_1.title = "device03";
+                graph1_1.labelText = "设备使用率：[[value]]\%";
+                graph1_1.balloonText = "device03在[[category]]月的设备使用率:[[value]]\%";
+                graph1_1.valueField = "device03";
+                graph1_1.type = "column";
+                graph1_1.lineAlpha = 0;
+                graph1_1.fillAlphas = 1;
+                graph1_1.lineColor = "#B3DBD4";
+                chart1.addGraph(graph1_1);
+
+                // fourth graph1_1  
+                graph1_1 = new AmCharts.AmGraph();
+                graph1_1.title = "device04";
+                graph1_1.labelText = "设备使用率：[[value]]\%";
+                graph1_1.balloonText = "device04在[[category]]月的设备使用率:[[value]]\%";
+                graph1_1.valueField = "device04";
+                graph1_1.type = "column";
+                graph1_1.lineAlpha = 0;
+                graph1_1.fillAlphas = 1;
+                graph1_1.lineColor = "#69A55C";
+                chart1.addGraph(graph1_1);
+
+                // fifth graph1_1
+                graph1_1 = new AmCharts.AmGraph();
+                graph1_1.title = "device05";
+                graph1_1.labelText = "设备使用率：[[value]]\%";
+                graph1_1.balloonText = "device05在[[category]]月的设备使用率:[[value]]\%";
+                graph1_1.valueField = "device05";
+                graph1_1.type = "column";
+                graph1_1.lineAlpha = 0;
+                graph1_1.fillAlphas = 1;
+                graph1_1.lineColor = "#B5B8D3";
+                chart1.addGraph(graph1_1);
+
+                // sixth graph1_1   
+                graph1_1 = new AmCharts.AmGraph();
+                graph1_1.title = "device06";
+                graph1_1.labelText = "设备使用率：[[value]]\%";
+                graph1_1.balloonText = "device06在[[category]]月的设备使用率:[[value]]\%";
+                graph1_1.valueField = "device06";
+                graph1_1.type = "column";
+                graph1_1.lineAlpha = 0;
+                graph1_1.fillAlphas = 1;
+                graph1_1.lineColor = "#F4E23B";
+                chart1.addGraph(graph1_1);
+
+                // LEGEND                  
+                var legend = new AmCharts.AmLegend();
+                legend.borderAlpha = 0.2;
+                legend.horizontalGap = 10;
+                chart1.addLegend(legend);
+
+                // WRITE
+                chart1.write("chartdiv1");
+            });
+
+            // this method sets chart1 2D/3D
+
+
+            function setDepth() {
+                if (document.getElementById("rbbb1").checked) {
+                    chart1.depth3D = 0;
+                    chart1.angle = 0;
+                } else {
+                    chart1.depth3D = 25;
+                    chart1.angle = 30;
+                }
+                chart1.validateNow();
+            }
+        </script>
+ 
+        <div id="chartdiv1" class="chart_div"></div>
+        <div style="margin-left: 160px;">
+            <input type="radio" checked="true" name="group" id="rbbb1" onclick="setDepth()">2D
+            <input type="radio" name="group" id="rb2" onclick="setDepth()">3D
+        </div>
+   
